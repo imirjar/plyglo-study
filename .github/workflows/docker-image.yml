@@ -58,7 +58,7 @@ jobs:
     # Шаг 6: Сборка веб-версии приложения в release режиме
     # --base-href устанавливает базовый путь для деплоя на GitHub Pages
     - name: Build Web
-      run: flutter build web --release --base-href /poliglotim-app/
+      run: flutter build web --release --base-href /
 
     # Шаг 7: Настройка GitHub Pages
     - name: Setup Pages
