@@ -15,7 +15,7 @@ class CourseClient {
   CourseClient({String? host, int? port})
     : _host = host ?? 'api.poliglotim.ru',
       _port = port ?? 80,
-      _baseUrl = Uri.parse('http://${host ?? 'api.poliglotim.ru'}');
+      _baseUrl = Uri.parse('https://${host ?? 'api.poliglotim.ru'}');
 
   final String _host;
   final int _port;
