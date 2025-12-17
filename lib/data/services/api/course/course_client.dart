@@ -67,7 +67,7 @@ class CourseClient {
 
   Future<Result<List<Chapter>>> getCourseChapters(String id) async {
     try {
-      final url = _buildUrl('/chapters/$id');
+      final url = _buildUrl('/course/$id');
       final response = await http.get(
         url,
         headers: _getHeaders(),
