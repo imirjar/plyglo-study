@@ -16,6 +16,7 @@ class CourseViewModel extends ChangeNotifier {
   // State
   List<Chapter> _chapters = [];
   bool _isLoading = false;
+  bool _isBodyOpened = false;
   Lesson? _lesson;
   String? _error;
 
@@ -23,6 +24,7 @@ class CourseViewModel extends ChangeNotifier {
   List<Chapter> get chapters => _chapters;
   Lesson? get lesson => _lesson;
   bool get isLoading => _isLoading;
+  bool get isBodyOpened => _isBodyOpened;
   String? get error => _error;
 
   // Загрузка глав курса
@@ -73,6 +75,11 @@ class CourseViewModel extends ChangeNotifier {
     }
     
     _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> toggleBody() async {
+    _isBodyOpened = !_isBodyOpened;
     notifyListeners();
   }
 }

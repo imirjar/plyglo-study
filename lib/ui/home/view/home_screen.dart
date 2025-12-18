@@ -32,11 +32,25 @@ class HomeScreen extends StatelessWidget {
           crossAxisCount = 5; // Большие экраны
         }
         return Scaffold(
-          appBar: AppBar(
-            toolbarHeight: 220, // Set this height
-            flexibleSpace: HomeHeader(viewModel:  viewModel, screenWidth: screenWidth, horizontalPadding: horizontalPadding, verticalPadding:verticalPadding),
+          body: Column(
+            children: [
+              // Заголовок
+              HomeHeader(
+                viewModel: viewModel,
+                screenWidth: screenWidth,
+                horizontalPadding: horizontalPadding,
+                verticalPadding: verticalPadding,
+              ),
+              
+              // Тело с прокруткой
+              Expanded(
+                child: HomeBody(
+                  crossAxisCount: crossAxisCount,
+                  viewModel: viewModel,
+                ),
+              ),
+            ],
           ),
-          body: HomeBody(crossAxisCount: crossAxisCount, viewModel: viewModel),
         );
       }
     );

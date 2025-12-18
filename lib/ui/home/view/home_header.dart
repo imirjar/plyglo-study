@@ -15,12 +15,10 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // decoration: BoxDecoration(
-      //   color: Theme.of(context).scaffoldBackgroundColor,
-      //   borderRadius: const BorderRadius.all(Radius.circular(15)),
-      // ),
+
       // Адаптивные отступы вместо фиксированных
       margin: EdgeInsets.symmetric(
+        
         horizontal: horizontalPadding,
         vertical: verticalPadding,
       ),
