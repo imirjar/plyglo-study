@@ -23,6 +23,11 @@ class CourseRepositoryLocal implements CourseRepository {
   }
 
   @override
+  Future<Result<List<Lesson>>> getLessons(String chapterID) async {
+    return Result.ok(_localDataService.getChapterLessons(chapterID));
+  }
+
+  @override
   Future<Result<Lesson>> getLesson(String lessonID) async {
     return Result.ok(_localDataService.getLessonText(lessonID));
   }

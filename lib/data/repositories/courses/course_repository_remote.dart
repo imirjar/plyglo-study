@@ -20,8 +20,13 @@ class CourseRepositoryRemote implements CourseRepository {
 
   @override
   Future<Result<List<Chapter>>> getChapters(String courseId) =>
-      _apiClient.getCourseChapters(courseId);
+    _apiClient.getChapters(courseId);
 
   @override
-  Future<Result<Lesson>> getLesson(String id) => _apiClient.getLesson(id);
+  Future<Result<List<Lesson>>> getLessons(String chapterID) =>
+    _apiClient.getLessons(chapterID);
+
+  @override
+  Future<Result<Lesson>> getLesson(String id) => 
+    _apiClient.getLesson(id);
 }

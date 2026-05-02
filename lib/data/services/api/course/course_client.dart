@@ -114,9 +114,9 @@ class CourseClient {
     }
   }
 
-  Future<Result<List<Chapter>>> getCourseChapters(String id) async {
+  Future<Result<List<Chapter>>> getChapters(String courseID) async {
     try {
-      final url = _buildUrl('/chapters', {'courseID': id});
+      final url = _buildUrl('/chapters', {'courseID': courseID});
       final response = await _getWithAuthRetry(url, requiresAuth: true);
 
       if (response.statusCode == 200) {
@@ -138,10 +138,37 @@ class CourseClient {
     }
   }
 
+  Future<Result<List<Lesson>>> getLessons(String lessonID) async {
+    try {
+      final url = _buildUrl('/lessons', {'chapterID': lessonID});
+      var response = await _getWithAuthRetry(url, requiresAuth: true);
+
+      if (response.statusCode == 400 || response.statusCode == 404) {
+        final fallbackUrl = _buildUrl('/lessons', {'chapter_id': lessonID});
+        response = await _getWithAuthRetry(fallbackUrl, requiresAuth: true);
+      }
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        final lessonsJson = _readList(json, 'lessons');
+
+        final lessons = lessonsJson.map((lessonJson) {
+          return Lesson.fromJson(lessonJson as Map<String, dynamic>);
+        }).toList();
+
+        return Result.ok(lessons);
+      }
+
+      return Result.error(
+        Exception('Invalid response: ${response.statusCode}'),
+      );
+    } on Exception catch (error) {
+      return Result.error(error);
+    }
+  }
+
   Future<Result<Lesson>> getLesson(String id) async {
     try {
-      // У тебя в APISIX route указан /lessons и /lessons/*
-      // поэтому лучше /lessons/$id, а не /lesson/$id
       final url = _buildUrl('/lessons/$id');
       final response = await _getWithAuthRetry(url, requiresAuth: true);
 

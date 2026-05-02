@@ -2,7 +2,6 @@ import 'package:poliglotim/domain/models/chapter.dart';
 import 'package:poliglotim/domain/models/course.dart';
 import 'package:poliglotim/domain/models/lesson.dart';
 
-
 class LocalCourseDataService {
   List<Course> getCourses() {
     return [
@@ -10,26 +9,23 @@ class LocalCourseDataService {
         id: '1',
         name: 'Английский язык',
         description: "asdfasdf",
-        updated: DateTime.now()
-      ),
-     Course(
-        id: '2',
-        name: 'Английский язык',
-        description: "asdfasdf",
-        updated: DateTime.now()
+        updated: DateTime.now(),
       ),
       Course(
-        id: '3',
-        name: 'Шумерский язык',
-        description: "asdfasdf",
-        updated: DateTime.now()
-      ),
+          id: '2',
+          name: 'Английский язык',
+          description: "asdfasdf",
+          updated: DateTime.now()),
       Course(
-        id: '4',
-        name: 'Китайский язык>',
-        description: "asdfasdf",
-        updated: DateTime.now()
-      ),
+          id: '3',
+          name: 'Шумерский язык',
+          description: "asdfasdf",
+          updated: DateTime.now()),
+      Course(
+          id: '4',
+          name: 'Китайский язык>',
+          description: "asdfasdf",
+          updated: DateTime.now()),
     ];
   }
 
@@ -40,103 +36,49 @@ class LocalCourseDataService {
         name: 'Глава 1',
         description: "asdfasdf",
         updated: DateTime.now(),
-        lessons: [
-          Lesson(
-            id: id, 
-            title: "Урок 1", 
-            text: "text"
-          ),
-          Lesson(
-            id: id, 
-            title: "Урок 2", 
-            text: "text"
-          ),
-          Lesson(
-            id: id, 
-            title: "Урок 3", 
-            text: "text"
-          ),
-        ]
+        courseId: id,
+        position: 1,
       ),
       Chapter(
         id: '2',
         name: 'Английский язык',
         description: "asdfasdf",
         updated: DateTime.now(),
-        lessons: [
-          Lesson(
-            id: id, 
-            title: "Урок 1", 
-            text: "text"
-          ),
-          Lesson(
-            id: id, 
-            title: "Урок 2", 
-            text: "text"
-          ),
-          Lesson(
-            id: id, 
-            title: "Урок 3", 
-            text: "text"
-          ),
-        ]
-        
+        courseId: id,
+        position: 2,
       ),
       Chapter(
         id: '3',
         name: 'Шумерский язык',
         description: "asdfasdf",
         updated: DateTime.now(),
-        lessons: [
-          Lesson(
-            id: id, 
-            title: "Урок 1", 
-            text: "text"
-          ),
-          Lesson(
-            id: id, 
-            title: "Урок 2", 
-            text: "text"
-          ),
-          Lesson(
-            id: id, 
-            title: "Урок 3", 
-            text: "text"
-          ),
-        ]
+        courseId: id,
+        position: 3,
       ),
       Chapter(
         id: '4',
         name: 'Китайский язык>',
         description: "asdfasdf",
         updated: DateTime.now(),
-        lessons: [
-          Lesson(
-            id: id, 
-            title: "Урок 1", 
-            text: "text"
-          ),
-          Lesson(
-            id: id, 
-            title: "Урок 2", 
-            text: "text"
-          ),
-          Lesson(
-            id: id, 
-            title: "Урок 3", 
-            text: "text"
-          ),
-        ]
+        courseId: id,
+        position: 4,
       ),
+    ];
+  }
+
+  List<Lesson> getChapterLessons(String chapterId) {
+    return [
+      Lesson(id: '$chapterId-1', chapterId: chapterId, title: "Урок 1"),
+      Lesson(id: '$chapterId-2', chapterId: chapterId, title: "Урок 2"),
+      Lesson(id: '$chapterId-3', chapterId: chapterId, title: "Урок 3"),
     ];
   }
 
   Lesson getLessonText(String lessonId) {
     return Lesson(
-      id: lessonId, 
-      title: "Урок 1", 
-      text: "text"
+      id: lessonId,
+      title: "Урок 1",
+      text: "text",
     );
   }
-
 }

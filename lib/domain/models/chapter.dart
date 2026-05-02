@@ -1,32 +1,28 @@
-import 'package:poliglotim/domain/models/lesson.dart';
-
 class Chapter {
   final String id;
   final String name;
   final String description;
   final DateTime updated;
-  final List<Lesson> lessons;
+  final String? courseId;
+  final int? position;
 
   Chapter({
-    required this.id, 
-    required this.name, 
-    required this.description, 
+    required this.id,
+    required this.name,
+    required this.description,
     required this.updated,
-    List<Lesson>? lessons, // Делаем параметр опциональным
-  }) : lessons = lessons ?? []; // Устанавливаем пустой список по умолчанию
-
+    this.courseId,
+    this.position,
+  });
 
   factory Chapter.fromJson(Map<String, dynamic> json) {
     return Chapter(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      updated: DateTime.parse(json['updated']),
-      lessons: json['lessons'] != null 
-          ? (json['lessons'] as List).map((e) => Lesson.fromJson(e)).toList()
-          : null, // Явная обработка null
-      // updated: DateTime.parse(json['updated']),
-      // logo: json['logo'] != null ? FileModel.fromJson(json['logo']) : null,
+      id: json['id'] as String,
+      name: json['name'] as String,
+      description: json['description'] as String? ?? '',
+      updated: DateTime.parse(json['updated'] as String),
+      courseId: json['course_id'] as String?,
+      position: json['position'] as int?,
     );
   }
 }
