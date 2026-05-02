@@ -9,11 +9,8 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Определяем, мобильный это экран или нет
     final isMobile = MediaQuery.of(context).size.width < 600;
-    // Или проверяем ориентацию
-    final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    
+
     return GestureDetector(
       onTap: () => context.go("/course/${course.id}"),
       child: Container(
@@ -32,7 +29,7 @@ class CourseCard extends StatelessWidget {
               offset: Offset(4, 4),
               blurRadius: 12,
             ),
-          ]
+          ],
         ),
         padding: const EdgeInsets.all(24.0),
         margin: const EdgeInsets.all(8.0),
@@ -47,7 +44,7 @@ class CourseCard extends StatelessWidget {
                 text: TextSpan(
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: isMobile ? 28 : 34, // Меньший шрифт на мобильных
+                    fontSize: isMobile ? 28 : 34,
                     color: Theme.of(context).colorScheme.primary,
                     fontFamily: 'PonomarUnicode',
                   ),
@@ -55,8 +52,7 @@ class CourseCard extends StatelessWidget {
                 ),
               ),
             ),
-            // Показываем описание только если достаточно места
-            if (course.description.isNotEmpty && !isMobile) 
+            if (course.description.isNotEmpty && !isMobile)
               Text(
                 course.description.toUpperCase(),
                 style: const TextStyle(
@@ -78,21 +74,19 @@ class CourseCard extends StatelessWidget {
 
     for (var word in words) {
       if (word.isEmpty) continue;
-      
-      // Добавляем пробел перед словом (кроме первого)
+
       if (spans.isNotEmpty) {
         spans.add(const TextSpan(text: ' '));
       }
 
-      // Первая буква красная, остальные черные
       spans.add(TextSpan(
         text: word.substring(0, 1),
         style: const TextStyle(
           color: Colors.red,
-          fontSize: 34, // Первая буква немного больше
+          fontSize: 34,
         ),
       ));
-      
+
       if (word.length > 1) {
         spans.add(TextSpan(text: word.substring(1)));
       }
@@ -100,55 +94,18 @@ class CourseCard extends StatelessWidget {
 
     return spans;
   }
-
-
-  // void _navigateToCourse(BuildContext context, Course course) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => CourseScreen(courseId: course.id),
-  //     ),
-  //   );
-  // }
-
 }
-
-// @override
-  // Widget build(BuildContext context) {
-  //   final bool isCircle = shape == BoxShape.circle;
-
-  //   // Рассчитываем тени на основе направления источника света
-  //   final List<BoxShadow> shadows = customShadows ??
-  //     [
-  //       const BoxShadow(
-  //         color: Colors.white30,
-  //         offset: Offset(-4, -4),
-  //         blurRadius: 8,
-  //       ),
-  //       const BoxShadow(
-  //         color: Colors.black38,
-  //         offset: Offset(4, 4),
-  //         blurRadius: 12,
-  //       ),
-  //     ];
-
-  //   return Container(
-  //     width: width,
-  //     height: height,
-  //     margin: margin,
-  //     alignment: alignment,
-  //     decoration: BoxDecoration(
-  //       color: Theme.of(context).scaffoldBackgroundColor,
-  //       shape: shape,
-  //       borderRadius: isCircle ? null : borderRadius,
-  //       boxShadow: shadows,
-  //     ),
-  //     child: ClipRRect(
-  //       // borderRadius: isCircle ? null : borderRadius,
-  //       child: Padding(
-  //         padding: padding,
-  //         child: child,
-  //       ),
-  //     ),
-  //   );
-  // }
+//       color: Theme.of(context).scaffoldBackgroundColor,
+//       shape: shape,
+//       borderRadius: isCircle ? null : borderRadius,
+//       boxShadow: shadows,
+//     ),
+//     child: ClipRRect(
+//       // borderRadius: isCircle ? null : borderRadius,
+//       child: Padding(
+//         padding: padding,
+//         child: child,
+//       ),
+//     ),
+//   );
+// }

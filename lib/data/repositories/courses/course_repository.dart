@@ -9,8 +9,8 @@ abstract class CourseRepository {
 
   Future<Result<List<Course>>> getCourses();
 
-  Future<Result<List<Chapter>>> getCourseChapters(String id);
+  Future<Result<List<Chapter>>> getChapters(String courseID);
 
-  Future<Result<Lesson>> getLesson(String lessonId);
+  Future<Result<Lesson>> getLesson(String lessonID);
 }
 

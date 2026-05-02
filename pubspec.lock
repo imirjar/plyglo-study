@@ -121,22 +121,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.11"
-  dio:
-    dependency: "direct main"
-    description:
-      name: dio
-      sha256: "253a18bbd4851fecba42f7343a1df3a9a4c1d31a2c1b37e221086b4fa8c8dbc9"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.8.0+1"
-  dio_web_adapter:
-    dependency: transitive
-    description:
-      name: dio_web_adapter
-      sha256: "7586e476d70caecaf1686d21eee7247ea43ef5c345eab9e0cc3583ff13378d78"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.1"
   english_words:
     dependency: "direct main"
     description:
@@ -182,6 +166,22 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_appauth:
+    dependency: "direct main"
+    description:
+      name: flutter_appauth
+      sha256: b09fa8e3eaba12ec341c69ec45063e06eb565304e24cc35caaf105bbae2e955c
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.0.1"
+  flutter_appauth_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_appauth_platform_interface
+      sha256: fd2920b853d09741aff2e1178e044ea2ade0c87799cd8e63f094ab35b00fdf70
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.0.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -285,14 +285,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  get_it:
-    dependency: "direct main"
-    description:
-      name: get_it
-      sha256: f126a3e286b7f5b578bf436d5592968706c4c1de28a228b870ce375d9f743103
-      url: "https://pub.dev"
-    source: hosted
-    version: "8.0.3"
   go_router:
     dependency: "direct main"
     description:
@@ -630,7 +622,7 @@ packages:
     source: hosted
     version: "0.1.3"
   shared_preferences:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: shared_preferences
       sha256: "6e8bf70b7fef813df4e9a36f658ac46d107db4b4cfe1048b477d4e453a8159f5"

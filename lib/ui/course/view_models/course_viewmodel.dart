@@ -33,7 +33,7 @@ class CourseViewModel extends ChangeNotifier {
     _error = null;
     notifyListeners(); // UI может показать индикатор загрузки
 
-    final result = await _repository.getCourseChapters(courseId);
+    final result = await _repository.getChapters(courseId);
     
     switch(result) {
       case Ok():

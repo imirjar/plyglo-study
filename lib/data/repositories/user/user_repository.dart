@@ -9,10 +9,7 @@ abstract class UserRepository extends ChangeNotifier {
   Future<bool> get isAuthenticated;
 
   /// Perform login
-  Future<Result<void>> login({
-    required String email,
-    required String password,
-  });
+  Future<Result<void>> login();
 
   /// Perform logout
   Future<Result<void>> logout();

@@ -5,6 +5,7 @@
 import FlutterMacOS
 import Foundation
 
+import flutter_appauth
 import flutter_localization
 import flutter_secure_storage_macos
 import media_kit_video
@@ -16,6 +17,7 @@ import video_player_avfoundation
 import wakelock_plus
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
+  FlutterAppauthPlugin.register(with: registry.registrar(forPlugin: "FlutterAppauthPlugin"))
   FlutterLocalizationPlugin.register(with: registry.registrar(forPlugin: "FlutterLocalizationPlugin"))
   FlutterSecureStoragePlugin.register(with: registry.registrar(forPlugin: "FlutterSecureStoragePlugin"))
   MediaKitVideoPlugin.register(with: registry.registrar(forPlugin: "MediaKitVideoPlugin"))

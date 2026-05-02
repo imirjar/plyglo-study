@@ -1,174 +1,158 @@
 // course_client.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:universal_io/io.dart';
 
 import 'package:poliglotim/domain/models/chapter.dart';
 import 'package:poliglotim/domain/models/course.dart';
 import 'package:poliglotim/domain/models/lesson.dart';
-import 'package:poliglotim/domain/models/user.dart';
 import '../../../../utils/result.dart';
 
-typedef AuthHeaderProvider = String? Function();
+typedef AuthHeaderProvider = Future<String?> Function();
+typedef LoginHandler = Future<bool> Function();
 
 class CourseClient {
   CourseClient({String? host, int? port})
-    : _host = host ?? 'api.poliglotim.ru',
-      _port = port ?? 80,
-      _baseUrl = Uri.parse('https://${host ?? 'api.poliglotim.ru'}');
+      : _baseUrl = Uri(
+          scheme: 'http',
+          host: host ?? 'localhost',
+          port: port ?? 9080,
+        );
 
-  final String _host;
-  final int _port;
   final Uri _baseUrl;
-  
-  AuthHeaderProvider? _authHeaderProvider;
 
-  set authHeaderProvider(AuthHeaderProvider authHeaderProvider) {
-    _authHeaderProvider = authHeaderProvider;
+  AuthHeaderProvider? _authHeaderProvider;
+  LoginHandler? _loginHandler;
+
+  set authHeaderProvider(AuthHeaderProvider provider) {
+    _authHeaderProvider = provider;
   }
 
-  Map<String, String> _getHeaders() {
+  set loginHandler(LoginHandler handler) {
+    _loginHandler = handler;
+  }
+
+  Future<Map<String, String>> _getHeaders() async {
     final headers = <String, String>{
-      'Content-Type': 'application/json',
+      'Accept': 'application/json',
     };
-    
-    final authHeader = _authHeaderProvider?.call();
+
+    final authHeader = await _authHeaderProvider?.call();
     if (authHeader != null) {
       headers['Authorization'] = authHeader;
     }
-    
+
     return headers;
   }
 
-  Uri _buildUrl(String path) {
-    return _baseUrl.replace(path: path);
+  Uri _buildUrl(String path, [Map<String, String>? queryParameters]) {
+    return _baseUrl.replace(
+      path: path,
+      queryParameters: queryParameters,
+    );
+  }
+
+  List<dynamic> _readList(dynamic json, String key) {
+    if (json is List<dynamic>) return json;
+
+    if (json is Map<String, dynamic> && json[key] is List<dynamic>) {
+      return json[key] as List<dynamic>;
+    }
+
+    throw const FormatException('Unexpected API response format');
+  }
+
+  Future<http.Response> _getWithAuthRetry(
+    Uri url, {
+    bool requiresAuth = false,
+  }) async {
+    if (requiresAuth && await _authHeaderProvider?.call() == null) {
+      final loginSuccess = await _loginHandler?.call() ?? false;
+      if (!loginSuccess) {
+        return http.Response('Unauthorized', 401);
+      }
+    }
+
+    var response = await http.get(
+      url,
+      headers: await _getHeaders(),
+    );
+
+    if (response.statusCode != 401) {
+      return response;
+    }
+
+    final loginSuccess = await _loginHandler?.call() ?? false;
+    if (!loginSuccess) {
+      return response;
+    }
+
+    response = await http.get(
+      url,
+      headers: await _getHeaders(),
+    );
+
+    return response;
   }
 
   Future<Result<List<Course>>> getCourses() async {
     try {
       final url = _buildUrl('/courses');
-      final response = await http.get(
-        url,
-        headers: _getHeaders(),
-      );
-      
+      final response = await _getWithAuthRetry(url);
+
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as List<dynamic>;
         return Result.ok(
           json.map((element) => Course.fromJson(element)).toList(),
         );
-      } else {
-        return Result.error(Exception("Invalid response: ${response.statusCode}"));
       }
+
+      return Result.error(
+        Exception('Invalid response: ${response.statusCode}'),
+      );
     } on Exception catch (error) {
       return Result.error(error);
     }
   }
 
   Future<Result<List<Chapter>>> getCourseChapters(String id) async {
-  try {
-    final url = _buildUrl('/course/$id');
-    final response = await http.get(
-      url,
-      headers: _getHeaders(),
-    );
-    
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body) as Map<String, dynamic>;
-      
-      // Предполагается, что JSON содержит список глав в поле "chapters"
-      // Настройте парсинг в соответствии с вашей структурой API
-      final List<dynamic> chaptersJson = json['chapters'] as List<dynamic>;
-      
-      final chapters = chaptersJson.map((chapterJson) {
-        return Chapter.fromJson(chapterJson as Map<String, dynamic>);
-      }).toList();
-      
-      return Result.ok(chapters);
-    } else {
-      return Result.error(Exception("Invalid response: ${response.statusCode}"));
-    }
-  } on Exception catch (error) {
-    return Result.error(error);
-  }
-}
-
-  Future<Result<Lesson>> getLesson(String id) async {
     try {
-      final url = _buildUrl('/lesson/$id');
-      final response = await http.get(
-        url,
-        headers: _getHeaders(),
-      );
-      
+      final url = _buildUrl('/chapters', {'courseID': id});
+      final response = await _getWithAuthRetry(url, requiresAuth: true);
+
       if (response.statusCode == 200) {
-        final lesson = Lesson.fromJson(jsonDecode(response.body));
-        return Result.ok(lesson);
-      } else {
-        return Result.error(Exception("Invalid response: ${response.statusCode}"));
-      }
-    } on Exception catch (error) {
-      return Result.error(error);
-    }
-  }
+        final json = jsonDecode(response.body);
+        final chaptersJson = _readList(json, 'chapters');
 
-}
-class UserClient {
-  AuthHeaderProvider? _authHeaderProvider;
-
-  set authHeaderProvider(AuthHeaderProvider authHeaderProvider) {
-    _authHeaderProvider = authHeaderProvider;
-  }
-
-  Map<String, String> _getHeaders() {
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-    };
-    
-    final authHeader = _authHeaderProvider?.call();
-    if (authHeader != null) {
-      headers['Authorization'] = authHeader;
-    }
-    
-    return headers;
-  }
-
-  Uri _buildUrl(String path) {
-    return _baseUrl.replace(path: path);
-  }
-
-  UserClient({String? host, int? port})
-    : _host = host ?? 'auth.poliglotim.ru',
-      _port = port ?? 80,
-      _baseUrl = Uri.parse('https://${host ?? 'auth.poliglotim.ru'}');
-
-  final String _host;
-  final int _port;
-  final Uri _baseUrl;
-
-  Future<Result<List<Chapter>>> getCourseChapters(String id) async {
-    try {
-      final url = _buildUrl('/auth/$id');
-      final response = await http.get(
-        url,
-        headers: _getHeaders(),
-      );
-      
-      if (response.statusCode == 200) {
-        final json = jsonDecode(response.body) as Map<String, dynamic>;
-        
-        // Предполагается, что JSON содержит список глав в поле "chapters"
-        // Настройте парсинг в соответствии с вашей структурой API
-        final List<dynamic> chaptersJson = json['chapters'] as List<dynamic>;
-        
         final chapters = chaptersJson.map((chapterJson) {
           return Chapter.fromJson(chapterJson as Map<String, dynamic>);
         }).toList();
-        
+
         return Result.ok(chapters);
-      } else {
-        return Result.error(Exception("Invalid response: ${response.statusCode}"));
       }
+
+      return Result.error(
+        Exception('Invalid response: ${response.statusCode}'),
+      );
+    } on Exception catch (error) {
+      return Result.error(error);
+    }
+  }
+
+  Future<Result<Lesson>> getLesson(String id) async {
+    try {
+      // У тебя в APISIX route указан /lessons и /lessons/*
+      // поэтому лучше /lessons/$id, а не /lesson/$id
+      final url = _buildUrl('/lessons/$id');
+      final response = await _getWithAuthRetry(url, requiresAuth: true);
+
+      if (response.statusCode == 200) {
+        final lesson = Lesson.fromJson(jsonDecode(response.body));
+        return Result.ok(lesson);
+      }
+
+      return Result.error(
+        Exception('Invalid response: ${response.statusCode}'),
+      );
     } on Exception catch (error) {
       return Result.error(error);
     }
