@@ -47,6 +47,7 @@ List<SingleChildWidget> get providersRemote {
 List<SingleChildWidget> get providersLocal {
   return [
     // User
+    Provider(create: (context) => AuthService()),
     ChangeNotifierProvider(
       create: (context) => UserRepositoryLocal() as UserRepository,
     ),

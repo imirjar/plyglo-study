@@ -1,147 +1,47 @@
-name: Build and Release Flutter App
+name: Build and Push Docker Image
 
-# Условия запуска workflow:
-# 1. При пуше тегов, начинающихся с 'v*' (например, v1.0.0)
-# 2. Вручную через кнопку в интерфейсе GitHub Actions
 on:
   push:
     tags: ['v*']
   workflow_dispatch:
 
-# Глобальные переменные окружения для всего workflow
 env:
-  FLUTTER_VERSION: '3.35.7'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
-# Необходимые разрешения для GitHub API
 permissions:
-  contents: write  # Для создания релизов
-  pages: write     # Для деплоя на GitHub Pages
-  id-token: write  # Для аутентификации
+  contents: read
+  packages: write
 
-# Два параллельных job: сборка веб-версии и macOS-версии
 jobs:
-  build-web:
-    runs-on: ubuntu-latest  # Используем Linux runner для сборки веб-версии
-    
+  build-and-push:
+    runs-on: ubuntu-latest
+
     steps:
-    # Шаг 1: Получение кода из репозитория
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    # Шаг 2: Установка Flutter SDK указанной версии
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: ${{ env.FLUTTER_VERSION }}
-        cache: true  # Кэширование Flutter для ускорения последующих сборок
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    # Шаг 3: Кэширование Flutter зависимостей
-    - name: Cache Flutter dependencies
-      uses: actions/cache@v3
-      with:
-        path: /opt/hostedtoolcache/flutter
-        key: flutter-${{ env.FLUTTER_VERSION }}
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=tag
+            type=raw,value=latest
 
-    # Шаг 4: Кэширование Pub зависимостей проекта
-    - name: Cache Pub dependencies
-      uses: actions/cache@v3
-      with:
-        path: ${{ github.workspace }}/.pub-cache
-        key: pub-${{ hashFiles('pubspec.lock') }}
-        restore-keys: |
-          pub-  # Если точный ключ не найден, используем частичное совпадение
-
-    # Шаг 5: Установка зависимостей проекта через Flutter pub
-    - name: Install dependencies
-      run: flutter pub get
-
-    # Шаг 6: Сборка веб-версии приложения в release режиме
-    # --base-href устанавливает базовый путь для деплоя на GitHub Pages
-    - name: Build Web
-      run: flutter build web --release --base-href /
-
-    # Шаг 7: Настройка GitHub Pages
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
-
-    # Шаг 8: Загрузка собранных файлов как артефакта для Pages
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: build/web  # Путь к собранным веб-файлам
-
-    # Шаг 9: Деплой на GitHub Pages
-    - name: Deploy to GitHub Pages
-      uses: actions/deploy-pages@v4
-
-  # Параллельный job для сборки macOS версии
-  build-macos:
-    runs-on: macos-latest  # Используем macOS runner для сборки нативных приложений
-    
-    steps:
-    # Шаг 1: Получение кода из репозитория
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    # Шаг 2: Установка Flutter SDK
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: ${{ env.FLUTTER_VERSION }}
-        cache: true
-
-    # Шаг 3: Кэширование Pub зависимостей (только для macOS runner)
-    - name: Cache Pub dependencies
-      uses: actions/cache@v3
-      with:
-        path: ${{ github.workspace }}/.pub-cache
-        key: pub-${{ hashFiles('pubspec.lock') }}
-        restore-keys: |
-          pub-
-
-    # Шаг 4: Установка зависимостей проекта
-    - name: Install dependencies
-      run: flutter pub get
-
-    # Шаг 5: Сборка macOS приложения в release режиме
-    - name: Build macOS
-      run: |
-        flutter build macos --release
-        # Поиск .app файла для подтверждения успешной сборки
-        find "build/macos" -name "*.app" -type d
-
-    # Шаг 6: Установка утилиты create-dmg для создания инсталлятора
-    - name: Install create-dmg
-      run: brew install create-dmg
-
-    # Шаг 7: Создание DMG файла (дискового образа) для распространения
-    - name: Create DMG for macOS
-      run: |
-        # Поиск пути к .app файлу
-        APP_PATH=$(find "build/macos" -name "*.app" -type d | head -1)
-        if [ -z "$APP_PATH" ]; then
-          echo "Error: .app file not found"
-          exit 1
-        fi
-        
-        # Создание DMG с настройками иконок и расположения
-        create-dmg \
-          --volname "Poliglotim ${{ github.ref_name }}" \
-          --window-pos 200 120 \
-          --window-size 800 400 \
-          --icon-size 100 \
-          --icon "$(basename "$APP_PATH")" 200 190 \
-          --hide-extension "$(basename "$APP_PATH")" \
-          --app-drop-link 600 185 \
-          "Poliglotim-${{ github.ref_name }}.dmg" \
-          "$APP_PATH"
-
-    # Шаг 8: Создание GitHub Release и загрузка DMG файла
-    - name: Create Release with macOS app
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          Poliglotim-${{ github.ref_name }}.dmg
-        generate_release_notes: true  # Автоматическая генерация заметок о релизе
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Токен для доступа к GitHub API
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

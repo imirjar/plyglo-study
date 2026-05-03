@@ -117,7 +117,12 @@ class CourseClient {
   Future<Result<List<Chapter>>> getChapters(String courseID) async {
     try {
       final url = _buildUrl('/chapters', {'courseID': courseID});
-      final response = await _getWithAuthRetry(url, requiresAuth: true);
+      var response = await _getWithAuthRetry(url, requiresAuth: true);
+
+      if (response.statusCode == 400 || response.statusCode == 404) {
+        final fallbackUrl = _buildUrl('/chapters', {'course_id': courseID});
+        response = await _getWithAuthRetry(fallbackUrl, requiresAuth: true);
+      }
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
