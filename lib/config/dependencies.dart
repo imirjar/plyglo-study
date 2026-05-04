@@ -1,10 +1,10 @@
-import 'package:poliglotim/data/repositories/user/user_repository_local.dart';
-import 'package:poliglotim/data/repositories/user/user_repository_remote.dart';
+import 'package:poliglotim/data/repositories/auth/auth_repository_local.dart';
+import 'package:poliglotim/data/repositories/auth/auth_repository_remote.dart';
 import 'package:poliglotim/data/repositories/courses/course_repository_local.dart';
 import 'package:poliglotim/data/repositories/courses/course_repository_remote.dart';
 import 'package:poliglotim/data/services/api/auth/auth_client.dart';
 import 'package:poliglotim/data/services/api/course/course_client.dart';
-import 'package:poliglotim/data/repositories/user/user_repository.dart';
+import 'package:poliglotim/data/repositories/auth/auth_repository.dart';
 import 'package:poliglotim/data/repositories/courses/course_repository.dart';
 import 'package:poliglotim/data/services/local/mocks/courses_mock.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +16,9 @@ List<SingleChildWidget> get providersRemote {
     // Auth
     Provider(create: (context) => AuthService()),
     ChangeNotifierProvider(
-      create: (context) => UserRepositoryRemote(
+      create: (context) => AuthRepositoryRemote(
         authService: context.read(),
-      ) as UserRepository,
+      ) as AuthRepository,
     ),
 
     // Course
@@ -49,7 +49,7 @@ List<SingleChildWidget> get providersLocal {
     // User
     Provider(create: (context) => AuthService()),
     ChangeNotifierProvider(
-      create: (context) => UserRepositoryLocal() as UserRepository,
+      create: (context) => AuthRepositoryLocal() as AuthRepository,
     ),
 
     // Course

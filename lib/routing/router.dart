@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:poliglotim/data/repositories/user/user_repository.dart';
+import 'package:poliglotim/data/repositories/auth/auth_repository.dart';
 import 'package:poliglotim/ui/auth/view/login_screen.dart';
 import 'package:poliglotim/ui/auth/view_models/login_viewmodel.dart';
 import 'package:poliglotim/ui/course/view/course_screen.dart';
@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 
 import 'routes.dart';
 
-GoRouter router(UserRepository authRepository) => GoRouter(
+GoRouter router(AuthRepository authRepository) => GoRouter(
   initialLocation: Routes.home,
   debugLogDiagnostics: true,
   // redirect: _redirect,
@@ -57,7 +57,7 @@ GoRouter router(UserRepository authRepository) => GoRouter(
     GoRoute(
       path: Routes.user,
       builder: (context, state) {
-        final viewModel = UserViewModel(
+        final viewModel = AuthViewModel(
           userRepository:  context.read(),
         );
         return UserScreen(viewModel: viewModel);

@@ -2,10 +2,10 @@ import 'package:logging/logging.dart';
 import 'package:poliglotim/domain/models/user.dart';
 
 import '../../../utils/result.dart';
-import 'user_repository.dart';
+import 'auth_repository.dart';
 
-class UserRepositoryLocal extends UserRepository {
-  UserRepositoryLocal();
+class AuthRepositoryLocal extends AuthRepository {
+  AuthRepositoryLocal();
 
   bool _isAuthenticated = false;
   final _log = Logger('UserRepositoryLocal');

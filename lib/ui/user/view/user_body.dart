@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:poliglotim/ui/user/view_models/user_viewmodel.dart';
 
 class UserBody extends StatelessWidget {
-  final UserViewModel viewModel;
+  final AuthViewModel viewModel;
 
   const UserBody({super.key, required this.viewModel});
 

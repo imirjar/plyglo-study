@@ -7,7 +7,7 @@ import 'package:poliglotim/ui/user/view_models/user_viewmodel.dart';
 class UserHeader extends StatelessWidget {
   const UserHeader({super.key, required this.screenWidth, required this.horizontalPadding, required this.verticalPadding, required this.viewModel});
 
-  final UserViewModel viewModel;
+  final AuthViewModel viewModel;
   final double horizontalPadding;
   final double verticalPadding;
   final double screenWidth;

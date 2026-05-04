@@ -54,8 +54,7 @@ class _AuthStartupState extends State<AuthStartup> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _completePendingLogin ??=
-        context.read<AuthService>().completePendingLogin();
+    _completePendingLogin ??= context.read<AuthService>().completePendingLogin();
   }
 
   @override

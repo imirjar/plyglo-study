@@ -3,14 +3,14 @@ import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:poliglotim/domain/models/user.dart';
 import 'package:poliglotim/domain/models/progress.dart';
-import 'package:poliglotim/data/repositories/user/user_repository.dart';
+import 'package:poliglotim/data/repositories/auth/auth_repository.dart';
 import 'package:poliglotim/utils/result.dart';
 
-class UserViewModel with ChangeNotifier {
-  final UserRepository _repository;
+class AuthViewModel with ChangeNotifier {
+  final AuthRepository _repository;
   final _log = Logger('UserViewModel');
 
-  UserViewModel({required UserRepository userRepository}) 
+  AuthViewModel({required AuthRepository userRepository}) 
     : _repository = userRepository;
 
   // State

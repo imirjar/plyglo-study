@@ -46,10 +46,13 @@ class AuthService {
 
     final expectedState = html.window.localStorage[_stateKey];
     final codeVerifier = html.window.localStorage[_codeVerifierKey];
+    final returnUrl = _safeReturnUrl(html.window.localStorage[_returnUrlKey]);
+
     if (expectedState == null ||
         codeVerifier == null ||
         expectedState != state) {
       await _clearPendingLogin();
+      html.window.location.replace(returnUrl);
       return false;
     }
 
@@ -58,8 +61,6 @@ class AuthService {
       codeVerifier: codeVerifier,
     );
 
-    final returnUrl =
-        html.window.localStorage[_returnUrlKey] ?? html.window.location.origin;
     await _clearPendingLogin();
 
     html.window.location.replace(returnUrl);
@@ -229,6 +230,22 @@ class AuthService {
     html.window.localStorage.remove(_codeVerifierKey);
     html.window.localStorage.remove(_stateKey);
     html.window.localStorage.remove(_returnUrlKey);
+  }
+
+  String _safeReturnUrl(String? storedReturnUrl) {
+    final fallback = '${html.window.location.origin}/';
+    if (storedReturnUrl == null || storedReturnUrl.isEmpty) return fallback;
+
+    final uri = Uri.tryParse(storedReturnUrl);
+    if (uri == null || uri.origin != html.window.location.origin) {
+      return fallback;
+    }
+
+    if (uri.path == '/auth/callback') {
+      return fallback;
+    }
+
+    return storedReturnUrl;
   }
 
   String _codeChallenge(String codeVerifier) {

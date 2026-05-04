@@ -4,7 +4,7 @@ import 'package:poliglotim/ui/user/view/user_body.dart';
 import 'package:poliglotim/ui/user/view_models/user_viewmodel.dart';
 
 class UserScreen extends StatefulWidget {
-  final UserViewModel viewModel;
+  final AuthViewModel viewModel;
 
   const UserScreen({super.key, required this.viewModel});
 
