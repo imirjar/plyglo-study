@@ -28,6 +28,33 @@ $ flutter test integration_test/app_local_data_test.dart
 
 Это приложение для изучения иностраннх языков, созданное с использованием Flutter. Оно включает в себя уроки с заданиями разных типов, систему авторизации и сохранение прогресса пользователя.
 
+## Авторизация через Keycloak
+
+Приложение использует OAuth 2.0 Authorization Code Flow with PKCE.
+
+Минимальная настройка Keycloak client:
+
+- Client type: `OpenID Connect`
+- Access type / Client authentication: public client
+- Standard flow: enabled
+- Valid redirect URIs для web: `http://127.0.0.1:8091/auth/callback`
+- Web origins для web: `http://127.0.0.1:8091`
+- Redirect URI для mobile/desktop: `com.poliglotim.app:/callback`
+
+Локальный запуск с Keycloak:
+
+```bash
+flutter run -d web-server \
+  --web-hostname 127.0.0.1 \
+  --web-port 8091 \
+  --dart-define=KEYCLOAK_BASE_URL=http://localhost:8080 \
+  --dart-define=KEYCLOAK_REALM=myrealm \
+  --dart-define=KEYCLOAK_CLIENT_ID=myapp-client
+```
+
+Если используешь другой realm/client, поменяй значения `KEYCLOAK_REALM` и
+`KEYCLOAK_CLIENT_ID`.
+
 ## Автор
 
 [Imirjar](https://github.com/imirjar)
