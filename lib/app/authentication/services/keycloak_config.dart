@@ -1,15 +1,15 @@
 class KeycloakConfig {
   static const baseUrl = String.fromEnvironment(
     'KEYCLOAK_BASE_URL',
-    defaultValue: 'http://localhost:8080',
+    defaultValue: 'http://localhost:9080',
   );
   static const realm = String.fromEnvironment(
     'KEYCLOAK_REALM',
-    defaultValue: 'myrealm',
+    defaultValue: 'study',
   );
   static const clientId = String.fromEnvironment(
     'KEYCLOAK_CLIENT_ID',
-    defaultValue: 'myapp-client',
+    defaultValue: 'frontend',
   );
   static const redirectScheme = String.fromEnvironment(
     'KEYCLOAK_REDIRECT_SCHEME',
