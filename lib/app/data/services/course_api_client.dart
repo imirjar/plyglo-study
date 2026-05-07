@@ -6,9 +6,21 @@ import 'package:poliglotim/app/data/models/course.dart';
 import 'package:poliglotim/app/data/models/lesson.dart';
 
 class CourseApiClient {
-  CourseApiClient({String? host, int? port, http.Client? httpClient})
-      : _baseUrl = 'http://${host ?? 'localhost'}:${port ?? 9080}',
+  CourseApiClient({
+    String? baseUrl,
+    String? host,
+    int? port,
+    http.Client? httpClient,
+  })  : _baseUrl = baseUrl ??
+            ((host != null || port != null)
+                ? 'http://${host ?? 'localhost'}:${port ?? 9080}'
+                : _defaultBaseUrl),
         _httpClient = httpClient ?? http.Client();
+
+  static const _defaultBaseUrl = String.fromEnvironment(
+    'COURSES_BASE_URL',
+    defaultValue: 'http://localhost/api',
+  );
 
   final String _baseUrl;
   final http.Client _httpClient;

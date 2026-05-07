@@ -1,7 +1,7 @@
 class KeycloakConfig {
   static const baseUrl = String.fromEnvironment(
     'KEYCLOAK_BASE_URL',
-    defaultValue: 'http://localhost:9080',
+    defaultValue: 'http://localhost/api',
   );
   static const realm = String.fromEnvironment(
     'KEYCLOAK_REALM',
