@@ -1,16 +1,16 @@
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:logging/logging.dart';
 import 'package:poliglotim/app/core/result.dart';
 import 'package:poliglotim/app/data/models/course.dart';
 import 'package:poliglotim/app/data/repositories/course_repository.dart';
 
 class CoursesViewModel with ChangeNotifier {
-  final CourseRepository repository = CourseRepository();
-  final _log = Logger('CoursesViewModel');
+  CoursesViewModel({CourseRepository? courseRepository})
+      : _repository = courseRepository ?? Get.find<CourseRepository>();
 
-  // CoursesViewModel({
-  //   required CourseRepository courseRepository,
-  // }) : _repository = courseRepository;
+  final CourseRepository _repository;
+  final _log = Logger('CoursesViewModel');
 
   // State
   List<Course> _courses = [];
@@ -28,7 +28,7 @@ class CoursesViewModel with ChangeNotifier {
     _error = null;
     notifyListeners(); // UI показывает индикатор загрузки
 
-    final result = await repository.getCourses();
+    final result = await _repository.getCourses();
 
     // 2. Обрабатываем результат
     switch (result) {

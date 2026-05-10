@@ -6,12 +6,14 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
-import 'package:poliglotim/app/authentication/models/token_model.dart';
-import 'package:poliglotim/app/authentication/services/keycloak_config.dart';
+import 'package:poliglotim/app/config/app_config.dart';
+import 'package:poliglotim/app/data/models/token_model.dart';
 import 'package:poliglotim/app/data/models/user.dart';
 
 class AuthService {
   AuthService();
+
+  final AuthConfig _authConfig = AppConfig.current.auth;
 
   static const _accessTokenKey = 'access_token';
   static const _refreshTokenKey = 'refresh_token';
@@ -86,12 +88,12 @@ class AuthService {
     html.window.localStorage[_returnUrlKey] = html.window.location.href;
 
     final authorizationUrl =
-        Uri.parse(KeycloakConfig.authorizeEndpoint).replace(
+        Uri.parse(_authConfig.authorizeEndpoint).replace(
       queryParameters: {
-        'client_id': KeycloakConfig.clientId,
+        'client_id': _authConfig.clientId,
         'redirect_uri': _redirectUrl,
         'response_type': 'code',
-        'scope': KeycloakConfig.scopes.join(' '),
+        'scope': _authConfig.scopes.join(' '),
         'state': state,
         'code_challenge': codeChallenge,
         'code_challenge_method': 'S256',
@@ -108,14 +110,14 @@ class AuthService {
 
     try {
       final response = await http.post(
-        Uri.parse(KeycloakConfig.tokenEndpoint),
+        Uri.parse(_authConfig.tokenEndpoint),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json',
         },
         body: {
           'grant_type': 'refresh_token',
-          'client_id': KeycloakConfig.clientId,
+          'client_id': _authConfig.clientId,
           'refresh_token': refreshToken,
         },
       );
@@ -136,7 +138,7 @@ class AuthService {
     }
 
     final response = await http.get(
-      Uri.parse(KeycloakConfig.userInfoEndpoint),
+      Uri.parse(_authConfig.userInfoEndpoint),
       headers: {
         'Accept': 'application/json',
         'Authorization': authHeader,
@@ -165,14 +167,14 @@ class AuthService {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse(KeycloakConfig.tokenEndpoint),
+        Uri.parse(_authConfig.tokenEndpoint),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json',
         },
         body: {
           'grant_type': 'authorization_code',
-          'client_id': KeycloakConfig.clientId,
+          'client_id': _authConfig.clientId,
           'code': code,
           'redirect_uri': _redirectUrl,
           'code_verifier': codeVerifier,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:poliglotim/app/authentication/repositories/auth_repository.dart';
+import 'package:poliglotim/app/data/repositories/auth_repository.dart';
 
 class AuthMiddleware extends GetMiddleware {
   @override

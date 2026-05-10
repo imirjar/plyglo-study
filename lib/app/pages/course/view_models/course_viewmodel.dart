@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:logging/logging.dart';
 import 'package:poliglotim/app/core/result.dart';
 import 'package:poliglotim/app/data/models/chapter.dart';
@@ -10,7 +11,7 @@ class CourseViewModel extends ChangeNotifier {
   final _log = Logger('CourseViewModel');
 
   CourseViewModel({CourseRepository? courseRepository})
-      : _repository = courseRepository ?? CourseRepository();
+      : _repository = courseRepository ?? Get.find<CourseRepository>();
 
   // State
   List<Chapter> _chapters = [];

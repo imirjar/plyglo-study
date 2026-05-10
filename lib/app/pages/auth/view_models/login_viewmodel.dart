@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:logging/logging.dart';
 
-import 'package:poliglotim/app/authentication/repositories/auth_repository.dart';
 import 'package:poliglotim/app/core/result.dart';
+import 'package:poliglotim/app/data/repositories/auth_repository.dart';
 
 class LoginViewModel {
   // LoginViewModel(this._repository, this._localStorage);

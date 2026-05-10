@@ -14,7 +14,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  late final LoginViewModel viewModel = LoginViewModel();
+  late final LoginViewModel viewModel = Get.find<LoginViewModel>();
 
   @override
   void initState() {

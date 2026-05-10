@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:poliglotim/app/pages/courses/view/courses_body.dart';
 import 'package:poliglotim/app/pages/courses/view/courses_header.dart';
 import 'package:poliglotim/app/pages/courses/view_models/courses_viewmodel.dart';
@@ -6,7 +7,7 @@ import 'package:poliglotim/app/pages/courses/view_models/courses_viewmodel.dart'
 class CoursesScreen extends StatefulWidget {
   CoursesScreen({super.key});
 
-  final CoursesViewModel viewModel = CoursesViewModel();
+  final CoursesViewModel viewModel = Get.find<CoursesViewModel>();
 
   @override
   State<CoursesScreen> createState() => _CoursesScreenState();

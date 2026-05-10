@@ -4,8 +4,8 @@ import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
-import 'package:poliglotim/app/authentication/models/token_model.dart';
-import 'package:poliglotim/app/authentication/services/keycloak_config.dart';
+import 'package:poliglotim/app/config/app_config.dart';
+import 'package:poliglotim/app/data/models/token_model.dart';
 import 'package:poliglotim/app/data/models/user.dart';
 
 class AuthService {
@@ -13,6 +13,7 @@ class AuthService {
 
   final FlutterAppAuth _appAuth = const FlutterAppAuth();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final AuthConfig _authConfig = AppConfig.current.auth;
   final Logger _log = Logger('AuthServiceNative');
 
   static const _accessTokenKey = 'access_token';
@@ -40,10 +41,10 @@ class AuthService {
     try {
       final result = await _appAuth.authorizeAndExchangeCode(
         AuthorizationTokenRequest(
-          KeycloakConfig.clientId,
-          KeycloakConfig.nativeRedirectUrl,
-          issuer: KeycloakConfig.issuer,
-          scopes: KeycloakConfig.scopes,
+          _authConfig.clientId,
+          _authConfig.nativeRedirectUrl,
+          issuer: _authConfig.issuer,
+          scopes: _authConfig.scopes,
           allowInsecureConnections: true,
         ),
       );
@@ -62,11 +63,11 @@ class AuthService {
     try {
       final result = await _appAuth.token(
         TokenRequest(
-          KeycloakConfig.clientId,
-          KeycloakConfig.nativeRedirectUrl,
-          issuer: KeycloakConfig.issuer,
+          _authConfig.clientId,
+          _authConfig.nativeRedirectUrl,
+          issuer: _authConfig.issuer,
           refreshToken: refreshToken,
-          scopes: KeycloakConfig.scopes,
+          scopes: _authConfig.scopes,
           allowInsecureConnections: true,
         ),
       );
@@ -85,7 +86,7 @@ class AuthService {
     }
 
     final response = await http.get(
-      Uri.parse(KeycloakConfig.userInfoEndpoint),
+      Uri.parse(_authConfig.userInfoEndpoint),
       headers: {
         'Accept': 'application/json',
         'Authorization': authHeader,

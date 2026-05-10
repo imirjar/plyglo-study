@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:poliglotim/app/pages/user/view/user_header.dart';
 import 'package:poliglotim/app/pages/user/view/user_body.dart';
 import 'package:poliglotim/app/pages/user/view_models/user_viewmodel.dart';
 
 class UserScreen extends StatefulWidget {
-  late final AuthViewModel viewModel = AuthViewModel();
+  late final AuthViewModel viewModel = Get.find<AuthViewModel>();
   UserScreen({super.key});
 
   @override

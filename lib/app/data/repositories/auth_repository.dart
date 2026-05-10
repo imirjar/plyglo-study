@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:poliglotim/app/authentication/services/auth_service.dart';
 import 'package:poliglotim/app/core/result.dart';
 import 'package:poliglotim/app/data/models/user.dart';
+import 'package:poliglotim/app/data/services/auth/auth_service.dart';
 
 class AuthRepository extends ChangeNotifier {
   AuthRepository({AuthService? authService})

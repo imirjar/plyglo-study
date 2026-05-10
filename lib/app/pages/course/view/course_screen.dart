@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:poliglotim/app/pages/course/view/course_body.dart';
 import 'package:poliglotim/app/pages/course/view/course_menu.dart';
 import 'package:poliglotim/app/pages/course/view_models/course_viewmodel.dart';
-import 'package:get/get.dart';
 
 class CourseScreen extends StatefulWidget {
-  late final CourseViewModel viewModel = CourseViewModel();
+  late final CourseViewModel viewModel = Get.find<CourseViewModel>();
   late final String courseId = _courseIdFromRoute();
   final String courseSlug =
       Uri.decodeComponent(Get.parameters['courseSlug'] ?? '');
