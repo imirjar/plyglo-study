@@ -38,6 +38,9 @@ class AuthService {
     if (expectedState == null ||
         codeVerifier == null ||
         expectedState != state) {
+      html.window.console.warn(
+        'OAuth callback state mismatch or missing PKCE verifier.',
+      );
       await _clearPendingLogin();
       html.window.location.replace(returnUrl);
       return false;
@@ -122,7 +125,12 @@ class AuthService {
         },
       );
 
-      if (response.statusCode != 200) return false;
+      if (response.statusCode != 200) {
+        html.window.console.warn(
+          'Refresh token failed: ${response.statusCode} ${response.body}',
+        );
+        return false;
+      }
 
       await _storeTokenResponse(response.body);
       return true;
@@ -181,11 +189,18 @@ class AuthService {
         },
       );
 
-      if (response.statusCode != 200) return false;
+      if (response.statusCode != 200) {
+        html.window.console.warn(
+          'Authorization code exchange failed: '
+          '${response.statusCode} ${response.body}',
+        );
+        return false;
+      }
 
       await _storeTokenResponse(response.body);
       return true;
-    } on Exception {
+    } on Exception catch (error) {
+      html.window.console.warn('Authorization code exchange error: $error');
       return false;
     }
   }

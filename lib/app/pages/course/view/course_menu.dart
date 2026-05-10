@@ -1,44 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:poliglotim/app/pages/core/themes/neumorphic.dart';
 import 'package:poliglotim/app/pages/course/view_models/course_viewmodel.dart';
 
-import 'package:poliglotim/app/data/models/lesson.dart';
 import 'package:poliglotim/app/data/models/chapter.dart';
-
-import 'package:poliglotim/app/pages/core/ui/elements/indicators/loading_indicator.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
 class CourseMenu extends StatelessWidget {
-  final String courseId;
   final CourseViewModel viewModel;
 
   const CourseMenu({
     super.key,
-    required this.courseId,
     required this.viewModel,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 24, 16, 24),
+    return Container(
+      decoration: Neumorphic.panel(context),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           GestureDetector(
             onTap: () => Get.offAllNamed('/'),
-            child: SizedBox(
-              width: 144,
-              height: 56,
-              child: SvgPicture.asset(
-                Theme.of(context).brightness == Brightness.dark
-                    ? "assets/images/poliglotim_white.svg"
-                    : "assets/images/poliglotim_black.svg",
-                fit: BoxFit.contain,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                width: 152,
+                height: 56,
+                child: SvgPicture.asset(
+                  Theme.of(context).brightness == Brightness.dark
+                      ? "assets/images/poliglotim_white.svg"
+                      : "assets/images/poliglotim_black.svg",
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           ListenableBuilder(
             listenable: viewModel,
             builder: (context, _) {
@@ -47,7 +48,7 @@ class CourseMenu extends StatelessWidget {
                   behavior: ScrollConfiguration.of(context)
                       .copyWith(scrollbars: false),
                   child: ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.only(bottom: 8),
                     itemCount: viewModel.chapters.length,
                     itemBuilder: (context, index) => ChapterTile(
                       chapter: viewModel.chapters[index],
@@ -76,53 +77,56 @@ class ChapterTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lessons = viewModel.lessonsForChapter(chapter.id);
-    final isLoading = viewModel.isLoadingLessons(chapter.id);
+    final isSelected = viewModel.selectedChapter?.id == chapter.id;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    return Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: ExpansionTile(
-        onExpansionChanged: (isExpanded) {
-          if (isExpanded) {
-            viewModel.loadLessons(chapter.id);
-          }
-        },
-        trailing: const SizedBox.shrink(),
-        visualDensity: const VisualDensity(horizontal: 0, vertical: 0),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 8),
-        title: Text(
-          chapter.name,
-          style: TextStyle(
-            fontWeight: FontWeight.normal,
-            color: Theme.of(context).textTheme.bodyLarge?.color,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Material(
+        color: isSelected
+            ? colorScheme.primary.withValues(alpha: 0.10)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: () => viewModel.selectChapter(chapter),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 28,
+                  child: Text(
+                    '${chapter.position ?? ''}',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          color: isSelected
+                              ? colorScheme.primary
+                              : colorScheme.onSurfaceVariant,
+                          fontWeight:
+                              isSelected ? FontWeight.w700 : FontWeight.w500,
+                        ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    chapter.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          height: 1.25,
+                          fontWeight:
+                              isSelected ? FontWeight.w700 : FontWeight.w500,
+                          color: isSelected
+                              ? colorScheme.primary
+                              : colorScheme.onSurface,
+                        ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        children: [
-          if (isLoading)
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: LoadingIndicator(size: 20),
-            )
-          else if (lessons.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text('Уроков пока нет'),
-              ),
-            )
-          else
-            for (Lesson lesson in lessons)
-              Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: ListTile(
-                  dense: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                  title: Text(lesson.title),
-                  onTap: () => viewModel.selectLesson(lesson),
-                ),
-              ),
-        ],
       ),
     );
   }
@@ -130,11 +134,13 @@ class ChapterTile extends StatelessWidget {
 
 class AnimatedMenuContainer extends StatelessWidget {
   final bool isExpanded;
+  final double width;
   final Widget child;
 
   const AnimatedMenuContainer({
     super.key,
     required this.isExpanded,
+    required this.width,
     required this.child,
   });
 
@@ -142,12 +148,12 @@ class AnimatedMenuContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      width: isExpanded ? 296 : 0,
+      width: isExpanded ? width : 0,
       curve: Curves.easeInOut,
       child: ClipRect(
         child: OverflowBox(
           alignment: Alignment.centerLeft,
-          maxWidth: 296,
+          maxWidth: width,
           child: child,
         ),
       ),

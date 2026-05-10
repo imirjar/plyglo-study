@@ -13,7 +13,6 @@ class PoliglotimApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      initialRoute: AppRoutes.courses,
       getPages: AppRoutes.pages,
     );
   }

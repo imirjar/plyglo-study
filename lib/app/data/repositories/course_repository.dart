@@ -23,22 +23,30 @@ class CourseRepository {
     }
   }
 
+  Future<Result<Course>> getCourse(String id) async {
+    try {
+      final json = await _apiService.get('/courses/$id');
+      return Result.ok(Course.fromJson(json as Map<String, dynamic>));
+    } on Exception catch (error) {
+      return Result.error(error);
+    }
+  }
+
   Future<Result<List<Chapter>>> getChapters(String courseId) async {
     try {
-      final json = await _getWithFallback(
+      final json = await _apiService.get(
         '/chapters',
-        primaryQueryParameters: {'courseID': courseId},
-        fallbackQueryParameters: {'course_id': courseId},
+        queryParameters: {'course_id': courseId},
       );
       final chaptersJson =
           json is List ? json : (json['chapters'] as List<dynamic>);
+      final chapters = chaptersJson
+          .map((chapterJson) =>
+              Chapter.fromJson(chapterJson as Map<String, dynamic>))
+          .toList()
+        ..sort(_compareChapters);
 
-      return Result.ok(
-        chaptersJson
-            .map((chapterJson) =>
-                Chapter.fromJson(chapterJson as Map<String, dynamic>))
-            .toList(),
-      );
+      return Result.ok(chapters);
     } on Exception catch (error) {
       return Result.error(error);
     }
@@ -46,20 +54,15 @@ class CourseRepository {
 
   Future<Result<List<Lesson>>> getLessons(String chapterId) async {
     try {
-      final json = await _getWithFallback(
+      final json = await _apiService.get(
         '/lessons',
-        primaryQueryParameters: {'chapterID': chapterId},
-        fallbackQueryParameters: {'chapter_id': chapterId},
+        queryParameters: {'chapter_id': chapterId},
       );
       final lessonsJson =
           json is List ? json : (json['lessons'] as List<dynamic>);
+      final lessons = _mapLessons(lessonsJson);
 
-      return Result.ok(
-        lessonsJson
-            .map((lessonJson) =>
-                Lesson.fromJson(lessonJson as Map<String, dynamic>))
-            .toList(),
-      );
+      return Result.ok(lessons);
     } on Exception catch (error) {
       return Result.error(error);
     }
@@ -68,30 +71,58 @@ class CourseRepository {
   Future<Result<Lesson>> getLesson(String id) async {
     try {
       final json = await _apiService.get('/lessons/$id');
-      return Result.ok(Lesson.fromJson(json as Map<String, dynamic>));
+      final lessonJson = _extractObjectJson(json, 'lesson');
+      return Result.ok(Lesson.fromJson(lessonJson));
     } on Exception catch (error) {
       return Result.error(error);
     }
   }
 
-  Future<dynamic> _getWithFallback(
-    String path, {
-    required Map<String, String> primaryQueryParameters,
-    required Map<String, String> fallbackQueryParameters,
-  }) async {
-    try {
-      return await _apiService.get(
-        path,
-        queryParameters: primaryQueryParameters,
-      );
-    } on ApiException catch (error) {
-      if (error.statusCode == 400 || error.statusCode == 404) {
-        return _apiService.get(
-          path,
-          queryParameters: fallbackQueryParameters,
-        );
-      }
-      rethrow;
+  List<Lesson> _mapLessons(List<dynamic> lessonsJson) {
+    final lessons = lessonsJson
+        .map(
+            (lessonJson) => Lesson.fromJson(lessonJson as Map<String, dynamic>))
+        .toList()
+      ..sort(_compareLessons);
+    return lessons;
+  }
+
+  Map<String, dynamic> _extractObjectJson(Object? json, String key) {
+    if (json is Map<String, dynamic>) {
+      final nested = json[key] ?? json[_capitalize(key)];
+      if (nested is Map<String, dynamic>) return nested;
+      return json;
     }
+
+    throw FormatException('Expected object response for $key');
+  }
+
+  String _capitalize(String value) {
+    if (value.isEmpty) return value;
+    return value[0].toUpperCase() + value.substring(1);
+  }
+
+  int _compareChapters(Chapter left, Chapter right) {
+    final leftPosition = left.position;
+    final rightPosition = right.position;
+
+    if (leftPosition != null && rightPosition != null) {
+      return leftPosition.compareTo(rightPosition);
+    }
+    if (leftPosition != null) return -1;
+    if (rightPosition != null) return 1;
+    return left.name.compareTo(right.name);
+  }
+
+  int _compareLessons(Lesson left, Lesson right) {
+    final leftPosition = left.position;
+    final rightPosition = right.position;
+
+    if (leftPosition != null && rightPosition != null) {
+      return leftPosition.compareTo(rightPosition);
+    }
+    if (leftPosition != null) return -1;
+    if (rightPosition != null) return 1;
+    return left.title.compareTo(right.title);
   }
 }

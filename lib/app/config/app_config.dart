@@ -75,7 +75,6 @@ class AuthConfig {
         'openid',
         'profile',
         'email',
-        'offline_access',
       ];
 
   String get issuer => '$baseUrl/realms/$realm';

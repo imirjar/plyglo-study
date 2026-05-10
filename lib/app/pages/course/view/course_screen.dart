@@ -7,8 +7,7 @@ import 'package:poliglotim/app/pages/course/view_models/course_viewmodel.dart';
 class CourseScreen extends StatefulWidget {
   late final CourseViewModel viewModel = Get.find<CourseViewModel>();
   late final String courseId = _courseIdFromRoute();
-  final String courseSlug =
-      Uri.decodeComponent(Get.parameters['courseSlug'] ?? '');
+  late final String courseSlug = Get.parameters['courseSlug'] ?? '';
 
   CourseScreen({super.key});
 
@@ -21,7 +20,7 @@ class CourseScreen extends StatefulWidget {
       return arguments['courseId'] as String;
     }
 
-    return Uri.decodeComponent(Get.parameters['courseSlug'] ?? '');
+    return '';
   }
 }
 
@@ -32,10 +31,10 @@ class _CourseScreenState extends State<CourseScreen> {
   @override
   void initState() {
     super.initState();
-    // ЗАГРУЗКА ДАННЫХ ИНИЦИИРУЕТСЯ ЗДЕСЬ!
-    // Это гарантирует, что данные загрузятся всего один раз при открытии экрана,
-    // независимо от того, что происходит с меню.
-    widget.viewModel.loadChapters(widget.courseId);
+    widget.viewModel.loadCourse(
+      courseSlug: widget.courseSlug,
+      courseId: widget.courseId,
+    );
   }
 
   @override
@@ -43,55 +42,62 @@ class _CourseScreenState extends State<CourseScreen> {
     super.didUpdateWidget(oldWidget);
     // Если курс изменился (например, при навигации по deep link),
     // загружаем данные для нового курса.
-    if (oldWidget.courseId != widget.courseId) {
-      widget.viewModel.loadChapters(widget.courseId);
+    if (oldWidget.courseId != widget.courseId ||
+        oldWidget.courseSlug != widget.courseSlug) {
+      widget.viewModel.loadCourse(
+        courseSlug: widget.courseSlug,
+        courseId: widget.courseId,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Row(
-          children: [
-            AnimatedMenuContainer(
-              isExpanded: isMenuOpened,
-              child: CourseMenu(
-                courseId: widget.courseId,
-                viewModel: widget.viewModel,
-              ),
-            ),
-            Expanded(
-              child: Stack(
-                children: [
-                  CourseBody(viewModel: widget.viewModel),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: IconButton(
-                        style: IconButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.surface,
-                          foregroundColor:
-                              Theme.of(context).colorScheme.primary,
-                          shape: const CircleBorder(),
-                          side: BorderSide(color: Colors.grey.shade300),
-                          elevation: 2,
-                        ),
-                        onPressed: () => toggleMenu(),
-                        icon: Icon(isMenuOpened
-                            ? Icons.chevron_left
-                            : Icons.chevron_right),
-                      ),
-                    ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final horizontalPadding = screenWidth < 600 ? 16.0 : 32.0;
+        final verticalPadding = screenWidth < 600 ? 16.0 : 24.0;
+        final menuWidth = screenWidth < 900 ? 268.0 : 296.0;
+        final toggleSlotWidth = screenWidth < 700 ? 52.0 : 56.0;
+
+        return Scaffold(
+          body: SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1320),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: horizontalPadding,
+                    vertical: verticalPadding,
                   ),
-                ],
+                  child: Row(
+                    children: [
+                      AnimatedMenuContainer(
+                        isExpanded: isMenuOpened,
+                        width: menuWidth,
+                        child: CourseMenu(viewModel: widget.viewModel),
+                      ),
+                      SizedBox(
+                        width: toggleSlotWidth,
+                        child: Center(
+                          child: _MenuToggleButton(
+                            isMenuOpened: isMenuOpened,
+                            onPressed: toggleMenu,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: CourseBody(viewModel: widget.viewModel),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -99,5 +105,34 @@ class _CourseScreenState extends State<CourseScreen> {
     setState(() {
       isMenuOpened = !isMenuOpened;
     });
+  }
+}
+
+class _MenuToggleButton extends StatelessWidget {
+  const _MenuToggleButton({
+    required this.isMenuOpened,
+    required this.onPressed,
+  });
+
+  final bool isMenuOpened;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      style: IconButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        shape: const CircleBorder(),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outlineVariant,
+        ),
+        elevation: 2,
+      ),
+      onPressed: onPressed,
+      icon: Icon(
+        isMenuOpened ? Icons.chevron_left : Icons.chevron_right,
+      ),
+    );
   }
 }
