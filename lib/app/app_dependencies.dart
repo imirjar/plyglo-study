@@ -13,7 +13,10 @@ Future<void> initializeAppDependencies() async {
   Get.put<AuthRepository>(authRepository, permanent: true);
 
   Get.put<ApiService>(
-    ApiService(authService: authService),
+    ApiService(
+      authService: authService,
+      onUnauthorized: authRepository.invalidateSession,
+    ),
     permanent: true,
   );
 

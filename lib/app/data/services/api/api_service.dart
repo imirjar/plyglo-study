@@ -9,13 +9,16 @@ class ApiService {
     AuthService? authService,
     String? baseUrl,
     http.Client? httpClient,
+    Future<void> Function()? onUnauthorized,
   })  : _authService = authService ?? AuthService(),
         _baseUrl = baseUrl ?? AppConfig.current.api.baseUrl,
-        _httpClient = httpClient ?? http.Client();
+        _httpClient = httpClient ?? http.Client(),
+        _onUnauthorized = onUnauthorized;
 
   final AuthService _authService;
   final String _baseUrl;
   final http.Client _httpClient;
+  final Future<void> Function()? _onUnauthorized;
 
   Future<dynamic> get(
     String path, {
@@ -24,11 +27,26 @@ class ApiService {
     final uri = _uri(path, queryParameters: queryParameters);
     var response = await _get(uri);
 
-    if (response.statusCode == 401 && await _authService.refreshToken()) {
-      response = await _get(uri);
+    if (response.statusCode == 401) {
+      final refreshed = await _authService.refreshToken();
+      if (refreshed) {
+        response = await _get(uri);
+      }
+      if (!refreshed || response.statusCode == 401) {
+        await _handleUnauthorized();
+      }
     }
 
     return _decode(response);
+  }
+
+  Future<void> _handleUnauthorized() async {
+    final onUnauthorized = _onUnauthorized;
+    if (onUnauthorized != null) {
+      await onUnauthorized();
+      return;
+    }
+    await _authService.clearTokens();
   }
 
   Future<http.Response> _get(Uri uri) async {

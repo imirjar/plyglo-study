@@ -9,7 +9,7 @@ class PoliglotimApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Poliglotim',
+      title: 'Полиглотствуем - Изучайте языки онлайн',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,

@@ -90,8 +90,7 @@ class AuthService {
     html.window.localStorage[_stateKey] = state;
     html.window.localStorage[_returnUrlKey] = html.window.location.href;
 
-    final authorizationUrl =
-        Uri.parse(_authConfig.authorizeEndpoint).replace(
+    final authorizationUrl = Uri.parse(_authConfig.authorizeEndpoint).replace(
       queryParameters: {
         'client_id': _authConfig.clientId,
         'redirect_uri': _redirectUrl,
@@ -129,6 +128,7 @@ class AuthService {
         html.window.console.warn(
           'Refresh token failed: ${response.statusCode} ${response.body}',
         );
+        await clearTokens();
         return false;
       }
 
@@ -163,10 +163,14 @@ class AuthService {
   }
 
   Future<void> logout() async {
+    await clearTokens();
+    await _clearPendingLogin();
+  }
+
+  Future<void> clearTokens() async {
     html.window.localStorage.remove(_accessTokenKey);
     html.window.localStorage.remove(_refreshTokenKey);
     html.window.localStorage.remove(_idTokenKey);
-    await _clearPendingLogin();
   }
 
   Future<bool> _exchangeCode({

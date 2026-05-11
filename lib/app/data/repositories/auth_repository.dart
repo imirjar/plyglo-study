@@ -47,6 +47,12 @@ class AuthRepository extends ChangeNotifier {
     }
   }
 
+  Future<void> invalidateSession() async {
+    await _authService.clearTokens();
+    _isAuthenticated = false;
+    notifyListeners();
+  }
+
   Future<Result<User>> getUserData() async {
     try {
       return Result.ok(await _authService.getUserData());

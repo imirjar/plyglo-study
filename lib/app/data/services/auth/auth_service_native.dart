@@ -75,6 +75,7 @@ class AuthService {
       return await _storeTokenResult(result) != null;
     } on Exception catch (error) {
       _log.warning('Refresh token error', error);
+      await clearTokens();
       return false;
     }
   }
@@ -103,6 +104,12 @@ class AuthService {
   }
 
   Future<void> logout() => _storage.deleteAll();
+
+  Future<void> clearTokens() async {
+    await _storage.delete(key: _accessTokenKey);
+    await _storage.delete(key: _refreshTokenKey);
+    await _storage.delete(key: _idTokenKey);
+  }
 
   Future<TokenModel?> _storeTokenResult(dynamic result) async {
     final accessToken = result.accessToken;
