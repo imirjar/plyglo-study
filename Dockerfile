@@ -2,7 +2,7 @@
 FROM instrumentisto/flutter:3.35.0 AS build-env
 WORKDIR /app
 COPY . .
-ARG APP_DOMAIN=dev.plyglo.com
+ARG APP_DOMAIN=plyglo.com
 ARG APP_SCHEME=http
 ARG API_BASE_URL=
 ARG AUTH_BASE_URL=

@@ -6,7 +6,7 @@ class AppConfig {
 
   static const _domain = String.fromEnvironment(
     'APP_DOMAIN',
-    defaultValue: 'dev.plyglo.com',
+    defaultValue: 'plyglo.com',
   );
   static const _scheme = String.fromEnvironment(
     'APP_SCHEME',

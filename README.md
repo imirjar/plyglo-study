@@ -47,7 +47,7 @@ $ flutter test integration_test/app_local_data_test.dart
 flutter run -d web-server \
   --web-hostname 127.0.0.1 \
   --web-port 8091 \
-  --dart-define=APP_DOMAIN=dev.plyglo.com \
+  --dart-define=APP_DOMAIN=plyglo.com \
   --dart-define=APP_SCHEME=http \
   --dart-define=KEYCLOAK_REALM=study \
   --dart-define=KEYCLOAK_CLIENT_ID=frontend
