@@ -11,7 +11,7 @@ class ApiService {
     http.Client? httpClient,
     Future<void> Function()? onUnauthorized,
   })  : _authService = authService ?? AuthService(),
-        _baseUrl = baseUrl ?? AppConfig.current.api.baseUrl,
+        _baseUrl = baseUrl ?? AppConfig.current.api,
         _httpClient = httpClient ?? http.Client(),
         _onUnauthorized = onUnauthorized;
 

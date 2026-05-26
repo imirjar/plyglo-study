@@ -13,7 +13,7 @@ import 'package:poliglotim/app/data/models/user.dart';
 class AuthService {
   AuthService();
 
-  final AuthConfig _authConfig = AppConfig.current.auth;
+  final String _authBaseUrl = AppConfig.current.auth;
 
   static const _accessTokenKey = 'access_token';
   static const _refreshTokenKey = 'refresh_token';
@@ -21,8 +21,23 @@ class AuthService {
   static const _codeVerifierKey = 'pkce_code_verifier';
   static const _stateKey = 'oauth_state';
   static const _returnUrlKey = 'oauth_return_url';
+  static const _clientId = 'frontend';
+  static const _scopes = [
+    'openid',
+    'profile',
+    'email',
+  ];
 
   String get _redirectUrl => '${html.window.location.origin}/auth/callback';
+  String get _normalizedAuthBaseUrl => _authBaseUrl.endsWith('/')
+      ? _authBaseUrl.substring(0, _authBaseUrl.length - 1)
+      : _authBaseUrl;
+  String get _authorizeEndpoint =>
+      '$_normalizedAuthBaseUrl/protocol/openid-connect/auth';
+  String get _tokenEndpoint =>
+      '$_normalizedAuthBaseUrl/protocol/openid-connect/token';
+  String get _userInfoEndpoint =>
+      '$_normalizedAuthBaseUrl/protocol/openid-connect/userinfo';
 
   Future<bool> completePendingLogin() async {
     final uri = Uri.parse(html.window.location.href);
@@ -90,12 +105,12 @@ class AuthService {
     html.window.localStorage[_stateKey] = state;
     html.window.localStorage[_returnUrlKey] = html.window.location.href;
 
-    final authorizationUrl = Uri.parse(_authConfig.authorizeEndpoint).replace(
+    final authorizationUrl = Uri.parse(_authorizeEndpoint).replace(
       queryParameters: {
-        'client_id': _authConfig.clientId,
+        'client_id': _clientId,
         'redirect_uri': _redirectUrl,
         'response_type': 'code',
-        'scope': _authConfig.scopes.join(' '),
+        'scope': _scopes.join(' '),
         'state': state,
         'code_challenge': codeChallenge,
         'code_challenge_method': 'S256',
@@ -112,14 +127,14 @@ class AuthService {
 
     try {
       final response = await http.post(
-        Uri.parse(_authConfig.tokenEndpoint),
+        Uri.parse(_tokenEndpoint),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json',
         },
         body: {
           'grant_type': 'refresh_token',
-          'client_id': _authConfig.clientId,
+          'client_id': _clientId,
           'refresh_token': refreshToken,
         },
       );
@@ -146,7 +161,7 @@ class AuthService {
     }
 
     final response = await http.get(
-      Uri.parse(_authConfig.userInfoEndpoint),
+      Uri.parse(_userInfoEndpoint),
       headers: {
         'Accept': 'application/json',
         'Authorization': authHeader,
@@ -179,14 +194,14 @@ class AuthService {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse(_authConfig.tokenEndpoint),
+        Uri.parse(_tokenEndpoint),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json',
         },
         body: {
           'grant_type': 'authorization_code',
-          'client_id': _authConfig.clientId,
+          'client_id': _clientId,
           'code': code,
           'redirect_uri': _redirectUrl,
           'code_verifier': codeVerifier,

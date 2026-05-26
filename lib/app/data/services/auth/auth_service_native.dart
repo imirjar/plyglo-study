@@ -13,12 +13,25 @@ class AuthService {
 
   final FlutterAppAuth _appAuth = const FlutterAppAuth();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  final AuthConfig _authConfig = AppConfig.current.auth;
+  final String _authBaseUrl = AppConfig.current.auth;
   final Logger _log = Logger('AuthServiceNative');
 
   static const _accessTokenKey = 'access_token';
   static const _refreshTokenKey = 'refresh_token';
   static const _idTokenKey = 'id_token';
+  static const _clientId = 'frontend';
+  static const _nativeRedirectUrl = 'app.poliglotim.com:/callback';
+  static const _scopes = [
+    'openid',
+    'profile',
+    'email',
+  ];
+
+  String get _normalizedAuthBaseUrl => _authBaseUrl.endsWith('/')
+      ? _authBaseUrl.substring(0, _authBaseUrl.length - 1)
+      : _authBaseUrl;
+  String get _userInfoEndpoint =>
+      '$_normalizedAuthBaseUrl/protocol/openid-connect/userinfo';
 
   Future<bool> completePendingLogin() async => false;
 
@@ -41,10 +54,10 @@ class AuthService {
     try {
       final result = await _appAuth.authorizeAndExchangeCode(
         AuthorizationTokenRequest(
-          _authConfig.clientId,
-          _authConfig.nativeRedirectUrl,
-          issuer: _authConfig.issuer,
-          scopes: _authConfig.scopes,
+          _clientId,
+          _nativeRedirectUrl,
+          issuer: _normalizedAuthBaseUrl,
+          scopes: _scopes,
           allowInsecureConnections: true,
         ),
       );
@@ -63,11 +76,11 @@ class AuthService {
     try {
       final result = await _appAuth.token(
         TokenRequest(
-          _authConfig.clientId,
-          _authConfig.nativeRedirectUrl,
-          issuer: _authConfig.issuer,
+          _clientId,
+          _nativeRedirectUrl,
+          issuer: _normalizedAuthBaseUrl,
           refreshToken: refreshToken,
-          scopes: _authConfig.scopes,
+          scopes: _scopes,
           allowInsecureConnections: true,
         ),
       );
@@ -87,7 +100,7 @@ class AuthService {
     }
 
     final response = await http.get(
-      Uri.parse(_authConfig.userInfoEndpoint),
+      Uri.parse(_userInfoEndpoint),
       headers: {
         'Accept': 'application/json',
         'Authorization': authHeader,

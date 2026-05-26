@@ -1,0 +1,36 @@
+:80 {
+    log {
+        output stdout
+        level INFO
+    }
+
+    handle_path /api/* {
+        rewrite * {$API_UPSTREAM_PATH:}{uri}
+        reverse_proxy {$API_BASE_URL}
+    }
+
+    handle /auth/callback {
+        root * /usr/share/caddy
+        try_files {path} /index.html
+        file_server
+    }
+
+    handle_path /oidc/* {
+        rewrite * {$AUTH_UPSTREAM_PATH:/realms/study}{uri}
+        reverse_proxy {$AUTH_BASE_URL}
+    }
+
+    handle /realms/* {
+        reverse_proxy {$AUTH_BASE_URL}
+    }
+
+    handle /resources/* {
+        reverse_proxy {$AUTH_BASE_URL}
+    }
+
+    handle {
+        root * /usr/share/caddy
+        try_files {path} /index.html
+        file_server
+    }
+}
