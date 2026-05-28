@@ -43,7 +43,6 @@ class AppRoutes {
     GetPage(
       name: course,
       page: () => CourseScreen(),
-      middlewares: [AuthMiddleware()],
       binding: BindingsBuilder(
         () => Get.lazyPut<CourseViewModel>(() => CourseViewModel()),
       ),
