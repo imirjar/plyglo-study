@@ -19,8 +19,8 @@ class AuthService {
   static const _accessTokenKey = 'access_token';
   static const _refreshTokenKey = 'refresh_token';
   static const _idTokenKey = 'id_token';
-  static const _clientId = 'frontend';
-  static const _nativeRedirectUrl = 'app.poliglotim.com:/callback';
+  static const _clientId = 'native';
+  static const _nativeRedirectUrl = 'com.poliglotim.app:/callback';
   static const _scopes = [
     'openid',
     'profile',

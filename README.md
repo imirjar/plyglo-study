@@ -32,14 +32,17 @@ $ flutter test integration_test/app_local_data_test.dart
 
 Приложение использует OAuth 2.0 Authorization Code Flow with PKCE.
 
-Минимальная настройка Keycloak client:
+Минимальная настройка Keycloak clients:
 
 - Client type: `OpenID Connect`
 - Access type / Client authentication: public client
 - Standard flow: enabled
-- Valid redirect URIs для web: `http://127.0.0.1:8091/auth/callback`
-- Web origins для web: `http://127.0.0.1:8091`
-- Redirect URI для mobile/desktop: `com.poliglotim.app:/callback`
+- PKCE: `S256`
+- Client `web`:
+  - Valid redirect URI: `https://study.plyglo.com/auth/callback`
+  - Web origin: `https://study.plyglo.com`
+- Client `native`:
+  - Valid redirect URI: `com.poliglotim.app:/callback`
 
 Локальный запуск с Keycloak:
 
@@ -47,21 +50,19 @@ $ flutter test integration_test/app_local_data_test.dart
 flutter run -d web-server \
   --web-hostname 127.0.0.1 \
   --web-port 8091 \
-  --dart-define=APP_DOMAIN=plyglo.com \
-  --dart-define=APP_SCHEME=http \
-  --dart-define=KEYCLOAK_REALM=study \
-  --dart-define=KEYCLOAK_CLIENT_ID=frontend
+  --dart-define=API_BASE_URL=https://api.plyglo.com \
+  --dart-define=AUTH_BASE_URL=https://auth.plyglo.com \
+  --dart-define=KEYCLOAK_REALM=study
 ```
 
-Если используешь другой realm/client, поменяй значения `KEYCLOAK_REALM` и
-`KEYCLOAK_CLIENT_ID`.
+Если используешь локальный web origin, добавь его в Keycloak client `web`:
+`http://127.0.0.1:8091/auth/callback` в Valid redirect URIs и
+`http://127.0.0.1:8091` в Web origins.
 
-Для prod-сборки достаточно поменять домен и схему:
+Для prod-сборки значения по умолчанию уже указывают на публичные сервисы:
 
 ```bash
-flutter build web --release \
-  --dart-define=APP_DOMAIN=plyglo.com \
-  --dart-define=APP_SCHEME=https
+flutter build web --release
 ```
 
 Если понадобится нестандартный маршрут, можно точечно переопределить

@@ -2,7 +2,13 @@
 FROM instrumentisto/flutter:3.41.6 AS builder
 WORKDIR /app
 COPY . .
-RUN flutter build web --release
+ARG API_BASE_URL=https://api.plyglo.com
+ARG AUTH_BASE_URL=https://auth.plyglo.com
+ARG KEYCLOAK_REALM=study
+RUN flutter build web --release \
+  --dart-define=API_BASE_URL=${API_BASE_URL} \
+  --dart-define=AUTH_BASE_URL=${AUTH_BASE_URL} \
+  --dart-define=KEYCLOAK_REALM=${KEYCLOAK_REALM}
 
 # Stage 2: Serve with Caddy
 FROM caddy:alpine

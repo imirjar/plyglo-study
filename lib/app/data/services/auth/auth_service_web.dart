@@ -21,7 +21,7 @@ class AuthService {
   static const _codeVerifierKey = 'pkce_code_verifier';
   static const _stateKey = 'oauth_state';
   static const _returnUrlKey = 'oauth_return_url';
-  static const _clientId = 'frontend';
+  static const _clientId = 'web';
   static const _scopes = [
     'openid',
     'profile',
