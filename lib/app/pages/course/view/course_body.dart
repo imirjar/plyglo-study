@@ -2,13 +2,71 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:poliglotim/app/data/models/lesson.dart';
 import 'package:poliglotim/app/pages/core/themes/neumorphic.dart';
+import 'package:poliglotim/app/pages/course/view/course_menu.dart';
 import 'package:poliglotim/app/pages/course/view_models/course_viewmodel.dart';
 import 'package:poliglotim/app/pages/core/ui/elements/indicators/loading_indicator.dart';
 import 'package:poliglotim/app/pages/core/ui/elements/placeholders/empty_placeholder.dart';
 
-class CourseBody extends StatelessWidget {
+class CourseBody extends StatefulWidget {
   final CourseViewModel viewModel;
   const CourseBody({super.key, required this.viewModel});
+
+  @override
+  State<CourseBody> createState() => _CourseBodyState();
+}
+
+class _CourseBodyState extends State<CourseBody> {
+  bool? _isMenuOpened;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxWidth < 700;
+        _isMenuOpened ??= !isCompact;
+
+        final menuWidth = isCompact
+            ? (constraints.maxWidth * 0.72).clamp(220.0, 268.0)
+            : constraints.maxWidth < 900
+                ? 268.0
+                : 296.0;
+        final toggleSlotWidth = isCompact ? 48.0 : 56.0;
+
+        return Row(
+          children: [
+            AnimatedMenuContainer(
+              isExpanded: _isMenuOpened!,
+              width: menuWidth,
+              child: CourseMenu(viewModel: widget.viewModel),
+            ),
+            SizedBox(
+              width: toggleSlotWidth,
+              child: Center(
+                child: _MenuToggleButton(
+                  isMenuOpened: _isMenuOpened!,
+                  onPressed: _toggleMenu,
+                ),
+              ),
+            ),
+            Expanded(
+              child: _LessonContentPanel(viewModel: widget.viewModel),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _toggleMenu() {
+    setState(() {
+      _isMenuOpened = !(_isMenuOpened ?? true);
+    });
+  }
+}
+
+class _LessonContentPanel extends StatelessWidget {
+  final CourseViewModel viewModel;
+  const _LessonContentPanel({required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +134,35 @@ class CourseBody extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _MenuToggleButton extends StatelessWidget {
+  const _MenuToggleButton({
+    required this.isMenuOpened,
+    required this.onPressed,
+  });
+
+  final bool isMenuOpened;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      style: IconButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        shape: const CircleBorder(),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outlineVariant,
+        ),
+        elevation: 2,
+      ),
+      onPressed: onPressed,
+      icon: Icon(
+        isMenuOpened ? Icons.chevron_left : Icons.chevron_right,
+      ),
     );
   }
 }

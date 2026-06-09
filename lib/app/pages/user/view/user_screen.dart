@@ -24,29 +24,21 @@ class _UserScreenState extends State<UserScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
-        final horizontalPadding = screenWidth < 600 ? 16.0 : 32.0;
-        final verticalPadding = screenWidth < 600 ? 16.0 : 24.0;
 
         return Scaffold(
           body: SafeArea(
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1120),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPadding,
-                    vertical: verticalPadding,
-                  ),
-                  child: Column(
-                    children: [
-                      UserHeader(
-                        viewModel: widget.viewModel,
-                        screenWidth: screenWidth,
-                      ),
-                      const SizedBox(height: 24),
-                      Expanded(child: UserBody(viewModel: widget.viewModel)),
-                    ],
-                  ),
+                child: Column(
+                  children: [
+                    UserHeader(
+                      viewModel: widget.viewModel,
+                      screenWidth: screenWidth,
+                    ),
+                    const SizedBox(height: 24),
+                    Expanded(child: UserBody(viewModel: widget.viewModel)),
+                  ],
                 ),
               ),
             ),

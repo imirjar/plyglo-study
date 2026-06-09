@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:poliglotim/app/pages/core/themes/neumorphic.dart';
 import 'package:poliglotim/app/pages/course/view_models/course_viewmodel.dart';
 
 import 'package:poliglotim/app/data/models/chapter.dart';
-
-import 'package:flutter_svg/flutter_svg.dart';
 
 class CourseMenu extends StatelessWidget {
   final CourseViewModel viewModel;
@@ -19,27 +16,10 @@ class CourseMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: Neumorphic.panel(context),
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          GestureDetector(
-            onTap: () => Get.offAllNamed('/'),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: SizedBox(
-                width: 152,
-                height: 56,
-                child: SvgPicture.asset(
-                  Theme.of(context).brightness == Brightness.dark
-                      ? "assets/images/poliglotim_white.svg"
-                      : "assets/images/poliglotim_black.svg",
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
           ListenableBuilder(
             listenable: viewModel,
             builder: (context, _) {

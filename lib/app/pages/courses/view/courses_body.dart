@@ -5,26 +5,47 @@ import 'package:poliglotim/app/pages/courses/view_models/courses_viewmodel.dart'
 class CoursesBody extends StatelessWidget {
   final CoursesViewModel viewModel;
   final int crossAxisCount;
+  final double screenWidth;
 
   const CoursesBody(
-      {super.key, required this.crossAxisCount, required this.viewModel});
+      {super.key,
+      required this.crossAxisCount,
+      required this.screenWidth,
+      required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: viewModel,
       builder: (context, _) {
-        return GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            childAspectRatio: 1.18,
-            mainAxisSpacing: 20,
-            crossAxisSpacing: 20,
+        final isMobile = screenWidth < 600;
+        final childAspectRatio = switch (screenWidth) {
+          < 600 => 2.05,
+          < 760 => 1.72,
+          < 980 => 1.58,
+          < 1200 => 1.42,
+          _ => 1.24,
+        };
+
+        return SliverPadding(
+          padding: EdgeInsets.fromLTRB(
+            isMobile ? 16 : 10,
+            isMobile ? 16 : 0,
+            isMobile ? 16 : 0,
+            24,
           ),
-          padding: const EdgeInsets.only(bottom: 24),
-          itemCount: viewModel.courses.length,
-          itemBuilder: (context, index) => CourseCard(
-            course: viewModel.courses[index],
+          sliver: SliverGrid.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              
+              crossAxisCount: crossAxisCount,
+              childAspectRatio: childAspectRatio,
+              mainAxisSpacing: isMobile ? 16 : 20,
+              crossAxisSpacing: isMobile ? 16 : 20,
+            ),
+            itemCount: viewModel.courses.length,
+            itemBuilder: (context, index) => CourseCard(
+              course: viewModel.courses[index],
+            ),
           ),
         );
       },

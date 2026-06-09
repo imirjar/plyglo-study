@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poliglotim/app/pages/core/ui/elements/buttons/circle_button.dart';
-import 'package:poliglotim/app/pages/courses/view_models/courses_viewmodel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class CoursesHeader extends StatefulWidget {
-  const CoursesHeader(
-      {super.key, required this.screenWidth, required this.viewModel});
+class AppHeader extends StatefulWidget {
+  const AppHeader({super.key, required this.screenWidth});
 
-  final CoursesViewModel viewModel;
   final double screenWidth;
 
   @override
-  State<CoursesHeader> createState() => _CoursesHeaderState();
+  State<AppHeader> createState() => _AppHeaderState();
 }
 
-class _CoursesHeaderState extends State<CoursesHeader> {
+class _AppHeaderState extends State<AppHeader> {
   late bool _isDarkMode = Get.isDarkMode;
 
   @override
@@ -26,13 +23,16 @@ class _CoursesHeaderState extends State<CoursesHeader> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(
-            width: widget.screenWidth < 550 ? 128 : 156,
-            child: SvgPicture.asset(
-              Theme.of(context).brightness == Brightness.dark
-                  ? "assets/images/poliglotim_white.svg"
-                  : "assets/images/poliglotim_black.svg",
-              fit: BoxFit.contain,
+          GestureDetector(
+            onTap: () => Get.offAllNamed('/'),
+            child: SizedBox(
+              width: widget.screenWidth < 550 ? 128 : 156,
+              child: SvgPicture.asset(
+                Theme.of(context).brightness == Brightness.dark
+                    ? "assets/images/poliglotim_white.svg"
+                    : "assets/images/poliglotim_black.svg",
+                fit: BoxFit.contain,
+              ),
             ),
           ),
           Row(

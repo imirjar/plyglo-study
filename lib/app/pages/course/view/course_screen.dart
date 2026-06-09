@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poliglotim/app/pages/course/view/course_body.dart';
-import 'package:poliglotim/app/pages/course/view/course_menu.dart';
 import 'package:poliglotim/app/pages/course/view_models/course_viewmodel.dart';
+import 'package:poliglotim/app/pages/core/ui/app_header.dart';
 
 class CourseScreen extends StatefulWidget {
   late final CourseViewModel viewModel = Get.find<CourseViewModel>();
@@ -26,8 +26,6 @@ class CourseScreen extends StatefulWidget {
 
 // course_screen.dart
 class _CourseScreenState extends State<CourseScreen> {
-  bool isMenuOpened = true;
-
   @override
   void initState() {
     super.initState();
@@ -56,83 +54,28 @@ class _CourseScreenState extends State<CourseScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
-        final horizontalPadding = screenWidth < 600 ? 16.0 : 32.0;
-        final verticalPadding = screenWidth < 600 ? 16.0 : 24.0;
-        final menuWidth = screenWidth < 900 ? 268.0 : 296.0;
-        final toggleSlotWidth = screenWidth < 700 ? 52.0 : 56.0;
 
         return Scaffold(
           body: SafeArea(
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1320),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPadding,
-                    vertical: verticalPadding,
-                  ),
-                  child: Row(
-                    children: [
-                      AnimatedMenuContainer(
-                        isExpanded: isMenuOpened,
-                        width: menuWidth,
-                        child: CourseMenu(viewModel: widget.viewModel),
-                      ),
-                      SizedBox(
-                        width: toggleSlotWidth,
-                        child: Center(
-                          child: _MenuToggleButton(
-                            isMenuOpened: isMenuOpened,
-                            onPressed: toggleMenu,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: CourseBody(viewModel: widget.viewModel),
-                      ),
-                    ],
-                  ),
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: AppHeader(screenWidth: screenWidth),
+                    ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                    SliverFillRemaining(
+                      child: CourseBody(viewModel: widget.viewModel),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
         );
       },
-    );
-  }
-
-  void toggleMenu() {
-    setState(() {
-      isMenuOpened = !isMenuOpened;
-    });
-  }
-}
-
-class _MenuToggleButton extends StatelessWidget {
-  const _MenuToggleButton({
-    required this.isMenuOpened,
-    required this.onPressed,
-  });
-
-  final bool isMenuOpened;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      style: IconButton.styleFrom(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        foregroundColor: Theme.of(context).colorScheme.primary,
-        shape: const CircleBorder(),
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.outlineVariant,
-        ),
-        elevation: 2,
-      ),
-      onPressed: onPressed,
-      icon: Icon(
-        isMenuOpened ? Icons.chevron_left : Icons.chevron_right,
-      ),
     );
   }
 }

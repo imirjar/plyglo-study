@@ -18,7 +18,27 @@ class _CourseCardState extends State<CourseCard> {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 600;
+    final cardPadding = switch (screenWidth) {
+      < 600 => 16.0,
+      < 980 => 18.0,
+      < 1200 => 20.0,
+      _ => 22.0,
+    };
+    final titleSize = switch (screenWidth) {
+      < 600 => 24.0,
+      < 980 => 26.0,
+      < 1200 => 30.0,
+      _ => 32.0,
+    };
+    final firstLetterSize = switch (screenWidth) {
+      < 600 => 26.0,
+      < 980 => 28.0,
+      < 1200 => 32.0,
+      _ => 34.0,
+    };
+    final descriptionSize = screenWidth < 1200 ? 14.0 : 15.0;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -50,7 +70,7 @@ class _CourseCardState extends State<CourseCard> {
               isHovered: _isHovered,
               isPressed: _isPressed,
             ),
-            padding: EdgeInsets.all(isMobile ? 20 : 24),
+            padding: EdgeInsets.all(cardPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -62,22 +82,25 @@ class _CourseCardState extends State<CourseCard> {
                     text: TextSpan(
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: isMobile ? 28 : 34,
+                        fontSize: titleSize,
                         color: Theme.of(context).colorScheme.primary,
                         fontFamily: 'PonomarUnicode',
                       ),
-                      children: _buildTitleWithRedLetters(widget.course.name),
+                      children: _buildTitleWithRedLetters(
+                        widget.course.name,
+                        firstLetterSize: firstLetterSize,
+                      ),
                     ),
                   ),
                 ),
                 if (widget.course.description.isNotEmpty && !isMobile)
                   Text(
                     widget.course.description.toUpperCase(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'PonomarUnicode',
-                      fontSize: 16,
+                      fontSize: descriptionSize,
                     ),
-                    maxLines: 3,
+                    maxLines: screenWidth < 1200 ? 2 : 3,
                     overflow: TextOverflow.ellipsis,
                   ),
               ],
@@ -93,7 +116,10 @@ class _CourseCardState extends State<CourseCard> {
     return Uri.encodeComponent(slug);
   }
 
-  List<TextSpan> _buildTitleWithRedLetters(String text) {
+  List<TextSpan> _buildTitleWithRedLetters(
+    String text, {
+    required double firstLetterSize,
+  }) {
     final words = text.toUpperCase().split(' ');
     final spans = <TextSpan>[];
 
@@ -106,9 +132,9 @@ class _CourseCardState extends State<CourseCard> {
 
       spans.add(TextSpan(
         text: word.substring(0, 1),
-        style: const TextStyle(
+        style: TextStyle(
           color: Colors.red,
-          fontSize: 34,
+          fontSize: firstLetterSize,
         ),
       ));
 
