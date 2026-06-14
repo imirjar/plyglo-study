@@ -58,8 +58,7 @@ class CourseRepository {
         '/lessons',
         queryParameters: {'chapter_id': chapterId},
       );
-      final lessonsJson =
-          json is List ? json : (json['lessons'] as List<dynamic>);
+      final lessonsJson = _extractListJson(json, 'lessons');
       final lessons = _mapLessons(lessonsJson);
 
       return Result.ok(lessons);
@@ -85,6 +84,17 @@ class CourseRepository {
         .toList()
       ..sort(_compareLessons);
     return lessons;
+  }
+
+  List<dynamic> _extractListJson(Object? json, String key) {
+    if (json is List<dynamic>) return json;
+
+    if (json is Map<String, dynamic>) {
+      final nested = json[key] ?? json[_capitalize(key)];
+      if (nested is List<dynamic>) return nested;
+    }
+
+    throw FormatException('Expected list response for $key');
   }
 
   Map<String, dynamic> _extractObjectJson(Object? json, String key) {

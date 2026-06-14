@@ -43,6 +43,11 @@ class _AppHeaderState extends State<AppHeader> {
               ),
               const SizedBox(width: 8),
               CircleButton(
+                onPressed: () => Get.toNamed('/exam'),
+                icon: Icons.sports_esports,
+              ),
+              const SizedBox(width: 8),
+              CircleButton(
                 onPressed: () => Get.toNamed('/user'),
                 icon: Icons.person,
               ),

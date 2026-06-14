@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:poliglotim/app/data/models/lesson.dart';
 import 'package:poliglotim/app/pages/core/themes/neumorphic.dart';
 import 'package:poliglotim/app/pages/course/view/course_menu.dart';

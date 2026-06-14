@@ -1,7 +1,5 @@
-// ignore_for_file: avoid_web_libraries_in_flutter
-
 import 'dart:convert';
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
@@ -9,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:poliglotim/app/config/app_config.dart';
 import 'package:poliglotim/app/data/models/token_model.dart';
 import 'package:poliglotim/app/data/models/user.dart';
+import 'package:web/web.dart' as web;
 
 class AuthService {
   AuthService();
@@ -28,7 +27,7 @@ class AuthService {
     'email',
   ];
 
-  String get _redirectUrl => '${html.window.location.origin}/auth/callback';
+  String get _redirectUrl => '${_location.origin}/auth/callback';
   String get _normalizedAuthBaseUrl => _authBaseUrl.endsWith('/')
       ? _authBaseUrl.substring(0, _authBaseUrl.length - 1)
       : _authBaseUrl;
@@ -38,26 +37,26 @@ class AuthService {
       '$_normalizedAuthBaseUrl/protocol/openid-connect/token';
   String get _userInfoEndpoint =>
       '$_normalizedAuthBaseUrl/protocol/openid-connect/userinfo';
+  web.Location get _location => web.window.location;
+  web.Storage get _localStorage => web.window.localStorage;
 
   Future<bool> completePendingLogin() async {
-    final uri = Uri.parse(html.window.location.href);
+    final uri = Uri.parse(_location.href);
     final code = uri.queryParameters['code'];
     final state = uri.queryParameters['state'];
 
     if (code == null || state == null) return false;
 
-    final expectedState = html.window.localStorage[_stateKey];
-    final codeVerifier = html.window.localStorage[_codeVerifierKey];
-    final returnUrl = _safeReturnUrl(html.window.localStorage[_returnUrlKey]);
+    final expectedState = _localStorage.getItem(_stateKey);
+    final codeVerifier = _localStorage.getItem(_codeVerifierKey);
+    final returnUrl = _safeReturnUrl(_localStorage.getItem(_returnUrlKey));
 
     if (expectedState == null ||
         codeVerifier == null ||
         expectedState != state) {
-      html.window.console.warn(
-        'OAuth callback state mismatch or missing PKCE verifier.',
-      );
+      _warn('OAuth callback state mismatch or missing PKCE verifier.');
       await _clearPendingLogin();
-      html.window.location.replace(returnUrl);
+      _location.replace(returnUrl);
       return false;
     }
 
@@ -67,7 +66,7 @@ class AuthService {
     );
 
     await _clearPendingLogin();
-    html.window.location.replace(returnUrl);
+    _location.replace(returnUrl);
     return success;
   }
 
@@ -77,10 +76,10 @@ class AuthService {
   }
 
   Future<String?> getAccessToken() async =>
-      html.window.localStorage[_accessTokenKey];
+      _localStorage.getItem(_accessTokenKey);
 
   Future<String?> getRefreshToken() async =>
-      html.window.localStorage[_refreshTokenKey];
+      _localStorage.getItem(_refreshTokenKey);
 
   Future<String?> getAuthHeader() async {
     final token = await getAccessToken();
@@ -89,7 +88,7 @@ class AuthService {
   }
 
   Future<TokenModel?> login() async {
-    final uri = Uri.parse(html.window.location.href);
+    final uri = Uri.parse(_location.href);
     if (uri.queryParameters.containsKey('code')) {
       final completed = await completePendingLogin();
       return completed
@@ -101,9 +100,9 @@ class AuthService {
     final state = _randomUrlSafeString(32);
     final codeChallenge = _codeChallenge(codeVerifier);
 
-    html.window.localStorage[_codeVerifierKey] = codeVerifier;
-    html.window.localStorage[_stateKey] = state;
-    html.window.localStorage[_returnUrlKey] = html.window.location.href;
+    _localStorage.setItem(_codeVerifierKey, codeVerifier);
+    _localStorage.setItem(_stateKey, state);
+    _localStorage.setItem(_returnUrlKey, _location.href);
 
     final authorizationUrl = Uri.parse(_authorizeEndpoint).replace(
       queryParameters: {
@@ -117,7 +116,7 @@ class AuthService {
       },
     );
 
-    html.window.location.assign(authorizationUrl.toString());
+    _location.assign(authorizationUrl.toString());
     return null;
   }
 
@@ -140,7 +139,7 @@ class AuthService {
       );
 
       if (response.statusCode != 200) {
-        html.window.console.warn(
+        _warn(
           'Refresh token failed: ${response.statusCode} ${response.body}',
         );
         await clearTokens();
@@ -183,9 +182,9 @@ class AuthService {
   }
 
   Future<void> clearTokens() async {
-    html.window.localStorage.remove(_accessTokenKey);
-    html.window.localStorage.remove(_refreshTokenKey);
-    html.window.localStorage.remove(_idTokenKey);
+    _localStorage.removeItem(_accessTokenKey);
+    _localStorage.removeItem(_refreshTokenKey);
+    _localStorage.removeItem(_idTokenKey);
   }
 
   Future<bool> _exchangeCode({
@@ -209,7 +208,7 @@ class AuthService {
       );
 
       if (response.statusCode != 200) {
-        html.window.console.warn(
+        _warn(
           'Authorization code exchange failed: '
           '${response.statusCode} ${response.body}',
         );
@@ -219,7 +218,7 @@ class AuthService {
       await _storeTokenResponse(response.body);
       return true;
     } on Exception catch (error) {
-      html.window.console.warn('Authorization code exchange error: $error');
+      _warn('Authorization code exchange error: $error');
       return false;
     }
   }
@@ -231,34 +230,38 @@ class AuthService {
     final idToken = json['id_token'] as String?;
 
     if (accessToken != null) {
-      html.window.localStorage[_accessTokenKey] = accessToken;
+      _localStorage.setItem(_accessTokenKey, accessToken);
     }
     if (refreshToken != null) {
-      html.window.localStorage[_refreshTokenKey] = refreshToken;
+      _localStorage.setItem(_refreshTokenKey, refreshToken);
     }
     if (idToken != null) {
-      html.window.localStorage[_idTokenKey] = idToken;
+      _localStorage.setItem(_idTokenKey, idToken);
     }
   }
 
   Future<void> _clearPendingLogin() async {
-    html.window.localStorage.remove(_codeVerifierKey);
-    html.window.localStorage.remove(_stateKey);
-    html.window.localStorage.remove(_returnUrlKey);
+    _localStorage.removeItem(_codeVerifierKey);
+    _localStorage.removeItem(_stateKey);
+    _localStorage.removeItem(_returnUrlKey);
   }
 
   String _safeReturnUrl(String? storedReturnUrl) {
-    final fallback = '${html.window.location.origin}/';
+    final fallback = '${_location.origin}/';
     if (storedReturnUrl == null || storedReturnUrl.isEmpty) return fallback;
 
     final uri = Uri.tryParse(storedReturnUrl);
-    if (uri == null || uri.origin != html.window.location.origin) {
+    if (uri == null || uri.origin != _location.origin) {
       return fallback;
     }
     if (uri.path == '/auth/callback' || uri.path == '/login') {
       return fallback;
     }
     return storedReturnUrl;
+  }
+
+  void _warn(String message) {
+    web.console.warn(message.toJS);
   }
 
   String _codeChallenge(String codeVerifier) {
