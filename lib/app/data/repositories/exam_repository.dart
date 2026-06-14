@@ -12,9 +12,17 @@ class ExamRepository {
 const _fakeExamJson = {
   'id': 'english-a1-games',
   'title': 'English A1 Arcade',
+  'gameTopics': [
+    {'id': 'vocabulary', 'name': 'Vocabulary', 'position': 1},
+    {'id': 'translation', 'name': 'Translation', 'position': 2},
+    {'id': 'grammar', 'name': 'Grammar', 'position': 3},
+    {'id': 'listening', 'name': 'Rhythm', 'position': 4},
+    {'id': 'dialogue', 'name': 'Dialogue', 'position': 5},
+  ],
   'tasks': [
     {
       'id': 'word-catcher',
+      'topicId': 'vocabulary',
       'type': 'wordCatcher',
       'title': 'Word Catcher',
       'prompt': 'Поймай только фрукты',
@@ -28,6 +36,7 @@ const _fakeExamJson = {
     },
     {
       'id': 'translation-arena',
+      'topicId': 'translation',
       'type': 'translationMatchArena',
       'title': 'Translation Arena',
       'prompt': 'Соедини слово и перевод',
@@ -45,6 +54,7 @@ const _fakeExamJson = {
     },
     {
       'id': 'sentence-runner',
+      'topicId': 'grammar',
       'type': 'sentenceBuilderRunner',
       'title': 'Sentence Runner',
       'prompt': 'Собери предложение по порядку',
@@ -58,6 +68,7 @@ const _fakeExamJson = {
     },
     {
       'id': 'gap-dungeon',
+      'topicId': 'grammar',
       'type': 'gapFillDungeon',
       'title': 'Gap Dungeon',
       'prompt': 'Открой дверь правильным словом',
@@ -71,6 +82,7 @@ const _fakeExamJson = {
     },
     {
       'id': 'rhythm',
+      'topicId': 'listening',
       'type': 'pronunciationRhythm',
       'title': 'Pronunciation Rhythm',
       'prompt': 'Тапни слоги слова banana',
@@ -83,6 +95,7 @@ const _fakeExamJson = {
     },
     {
       'id': 'memory',
+      'topicId': 'translation',
       'type': 'memoryCards',
       'title': 'Memory Cards',
       'prompt': 'Найди пары',
@@ -100,6 +113,7 @@ const _fakeExamJson = {
     },
     {
       'id': 'defense',
+      'topicId': 'vocabulary',
       'type': 'wordDefense',
       'title': 'Word Defense',
       'prompt': 'Останови только глаголы',
@@ -113,6 +127,7 @@ const _fakeExamJson = {
     },
     {
       'id': 'dialogue',
+      'topicId': 'dialogue',
       'type': 'dialogueQuest',
       'title': 'Dialogue Quest',
       'prompt': 'NPC: How are you?',
@@ -125,6 +140,7 @@ const _fakeExamJson = {
     },
     {
       'id': 'spelling',
+      'topicId': 'vocabulary',
       'type': 'spellingArcade',
       'title': 'Spelling Arcade',
       'prompt': 'Собери слово: яблоко',
@@ -139,6 +155,7 @@ const _fakeExamJson = {
     },
     {
       'id': 'grammar',
+      'topicId': 'grammar',
       'type': 'grammarSorter',
       'title': 'Grammar Sorter',
       'prompt': 'Отправь слова по частям речи',

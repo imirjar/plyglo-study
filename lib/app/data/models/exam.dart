@@ -15,20 +15,45 @@ class Exam {
   const Exam({
     required this.id,
     required this.title,
+    required this.gameTopics,
     required this.tasks,
   });
 
   final String id;
   final String title;
+  final List<ExamGameTopic> gameTopics;
   final List<ExamTask> tasks;
 
   factory Exam.fromJson(Map<String, dynamic> json) {
     return Exam(
       id: json['id'] as String,
       title: json['title'] as String,
+      gameTopics: (json['gameTopics'] as List<dynamic>)
+          .map((topic) => ExamGameTopic.fromJson(topic as Map<String, dynamic>))
+          .toList(),
       tasks: (json['tasks'] as List<dynamic>)
           .map((task) => ExamTask.fromJson(task as Map<String, dynamic>))
           .toList(),
+    );
+  }
+}
+
+class ExamGameTopic {
+  const ExamGameTopic({
+    required this.id,
+    required this.name,
+    this.position,
+  });
+
+  final String id;
+  final String name;
+  final int? position;
+
+  factory ExamGameTopic.fromJson(Map<String, dynamic> json) {
+    return ExamGameTopic(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      position: json['position'] as int?,
     );
   }
 }
@@ -39,6 +64,7 @@ class ExamTask {
     required this.type,
     required this.title,
     required this.prompt,
+    required this.topicId,
     this.left = const [],
     this.right = const [],
     this.options = const [],
@@ -55,6 +81,7 @@ class ExamTask {
   final ExamTaskType type;
   final String title;
   final String prompt;
+  final String topicId;
   final List<ExamChoice> left;
   final List<ExamChoice> right;
   final List<ExamChoice> options;
@@ -72,6 +99,7 @@ class ExamTask {
       type: _typeFromJson(json['type'] as String),
       title: json['title'] as String,
       prompt: json['prompt'] as String,
+      topicId: json['topicId'] as String,
       left: _choices(json['left']),
       right: _choices(json['right']),
       options: _choices(json['options']),
