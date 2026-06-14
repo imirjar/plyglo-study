@@ -1,5 +1,5 @@
 # Stage 1: Build Flutter web
-FROM instrumentisto/flutter:3.44.2 AS builder
+FROM instrumentisto/flutter:latest AS builder
 WORKDIR /app
 COPY . .
 ARG API_BASE_URL=https://api.plyglo.com
