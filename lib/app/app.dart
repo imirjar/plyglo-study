@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:poliglotim/app/app_routes.dart';
-import 'package:poliglotim/app/pages/core/themes/theme.dart';
+import 'package:poliglotim/app/ui/core/themes/theme.dart';
 
 class PoliglotimApp extends StatelessWidget {
   const PoliglotimApp({super.key});

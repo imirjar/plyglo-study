@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
 import 'package:poliglotim/app/middlewares/auth_middleware.dart';
-import 'package:poliglotim/app/pages/auth/view/login_screen.dart';
-import 'package:poliglotim/app/pages/auth/view_models/login_viewmodel.dart';
-import 'package:poliglotim/app/pages/course/view_models/course_viewmodel.dart';
-import 'package:poliglotim/app/pages/courses/view_models/courses_viewmodel.dart';
-import 'package:poliglotim/app/pages/exam/view_models/exam_viewmodel.dart';
-import 'package:poliglotim/app/pages/main/view/main_screen.dart';
-import 'package:poliglotim/app/pages/user/view_models/user_viewmodel.dart';
+import 'package:poliglotim/app/ui/screens/auth/view/login_screen.dart';
+import 'package:poliglotim/app/ui/screens/auth/view_models/login_viewmodel.dart';
+import 'package:poliglotim/app/ui/pages/course/view_models/course_viewmodel.dart';
+import 'package:poliglotim/app/ui/pages/courses/view_models/courses_viewmodel.dart';
+import 'package:poliglotim/app/ui/pages/exam/view_models/exam_viewmodel.dart';
+import 'package:poliglotim/app/ui/screens/home/home_screen.dart';
+import 'package:poliglotim/app/ui/pages/user/view_models/user_viewmodel.dart';
 
 class AppRoutes {
   const AppRoutes._();
@@ -27,14 +27,14 @@ class AppRoutes {
     ),
     GetPage(
       name: courses,
-      page: () => const MainScreen(section: MainSection.courses),
+      page: () => const HomeScreen(section: HomeSection.courses),
       binding: BindingsBuilder(
         () => Get.lazyPut<CoursesViewModel>(() => CoursesViewModel()),
       ),
     ),
     GetPage(
       name: user,
-      page: () => const MainScreen(section: MainSection.user),
+      page: () => const HomeScreen(section: HomeSection.user),
       middlewares: [AuthMiddleware()],
       binding: BindingsBuilder(
         () => Get.lazyPut<AuthViewModel>(() => AuthViewModel()),
@@ -42,14 +42,14 @@ class AppRoutes {
     ),
     GetPage(
       name: exam,
-      page: () => const MainScreen(section: MainSection.exam),
+      page: () => const HomeScreen(section: HomeSection.exam),
       binding: BindingsBuilder(
         () => Get.lazyPut<ExamViewModel>(() => ExamViewModel()),
       ),
     ),
     GetPage(
       name: course,
-      page: () => const MainScreen(section: MainSection.course),
+      page: () => const HomeScreen(section: HomeSection.course),
       binding: BindingsBuilder(
         () => Get.lazyPut<CourseViewModel>(() => CourseViewModel()),
       ),
