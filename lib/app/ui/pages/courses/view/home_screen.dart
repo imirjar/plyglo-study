@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:poliglotim/app/ui/core/ui/app_header.dart';
+import 'package:poliglotim/app/ui/core/ui/components/app_header.dart';
 import 'package:poliglotim/app/ui/pages/course/view/course_view.dart';
 import 'package:poliglotim/app/ui/pages/courses/view/courses_view.dart';
-import 'package:poliglotim/app/ui/pages/exam/view/exam_view.dart';
-import 'package:poliglotim/app/ui/pages/user/view/user_view.dart';
+import 'package:poliglotim/app/ui/pages/exam/view/exam_screen.dart';
+import 'package:poliglotim/app/ui/pages/user/view/user_screen.dart';
 
-enum HomeSection {
+enum StudySection {
   courses,
   course,
   exam,
   user,
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({
+class StudyScreen extends StatelessWidget {
+  const StudyScreen({
     super.key,
     required this.section,
   });
 
-  final HomeSection section;
+  final StudySection section;
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +52,10 @@ class HomeScreen extends StatelessWidget {
 
   List<Widget> _bodySlivers(double screenWidth) {
     return switch (section) {
-      HomeSection.courses => [
-          CoursesView(screenWidth: screenWidth),
+      StudySection.courses => [
+          CoursesScreen(screenWidth: screenWidth),
         ],
-      HomeSection.course => [
+      StudySection.course => [
           SliverFillRemaining(
             child: CourseView(
               courseSlug: Get.parameters['courseSlug'] ?? '',
@@ -63,14 +63,14 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ],
-      HomeSection.exam => [
+      StudySection.exam => [
           SliverFillRemaining( 
-            child: ExamView(screenWidth: screenWidth),
+            child: ExamScreen(screenWidth: screenWidth),
           ),
         ],
-      HomeSection.user => [
+      StudySection.user => [
           SliverFillRemaining(
-            child: UserView(screenWidth: screenWidth),
+            child: UserScreen(screenWidth: screenWidth),
           ),
         ],
     };

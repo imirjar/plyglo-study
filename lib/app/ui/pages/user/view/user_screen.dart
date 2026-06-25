@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:poliglotim/app/ui/pages/user/view/user_body.dart';
 import 'package:poliglotim/app/ui/pages/user/view_models/user_viewmodel.dart';
 
-class UserView extends StatefulWidget {
-  const UserView({
+class UserScreen extends StatefulWidget {
+  const UserScreen({
     super.key,
     required this.screenWidth,
   });
@@ -12,10 +12,10 @@ class UserView extends StatefulWidget {
   final double screenWidth;
 
   @override
-  State<UserView> createState() => _UserViewState();
+  State<UserScreen> createState() => _UserScreenState();
 }
 
-class _UserViewState extends State<UserView> {
+class _UserScreenState extends State<UserScreen> {
   late final AuthViewModel _viewModel = Get.find<AuthViewModel>();
 
   @override

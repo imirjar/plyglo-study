@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:poliglotim/app/ui/pages/exam/view/exam_body.dart';
 import 'package:poliglotim/app/ui/pages/exam/view_models/exam_viewmodel.dart';
 
-class ExamView extends StatefulWidget {
-  const ExamView({
+class ExamScreen extends StatefulWidget {
+  const ExamScreen({
     super.key,
     required this.screenWidth,
   });
@@ -12,10 +12,10 @@ class ExamView extends StatefulWidget {
   final double screenWidth;
 
   @override
-  State<ExamView> createState() => _ExamViewState();
+  State<ExamScreen> createState() => _ExamScreenState();
 }
 
-class _ExamViewState extends State<ExamView> {
+class _ExamScreenState extends State<ExamScreen> {
   late final ExamViewModel _viewModel = Get.find<ExamViewModel>();
 
   @override

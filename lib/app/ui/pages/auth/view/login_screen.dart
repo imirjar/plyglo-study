@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import 'package:poliglotim/app/ui/screens/auth/view_models/login_viewmodel.dart';
+import 'package:poliglotim/app/ui/pages/auth/view_models/login_viewmodel.dart';
 import 'package:poliglotim/app/ui/core/themes/neumorphic.dart';
 import 'package:poliglotim/app/ui/core/ui/elements/buttons/circle_button.dart';
 

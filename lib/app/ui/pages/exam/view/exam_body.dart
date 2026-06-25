@@ -1,8 +1,9 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:poliglotim/app/data/models/exam.dart';
-import 'package:poliglotim/app/ui/core/ui/learning_workspace.dart';
-import 'package:poliglotim/app/ui/pages/course/view/course_menu.dart';
+import 'package:poliglotim/app/ui/core/ui/screens/learning_workspace.dart';
+// import 'package:poliglotim/app/ui/core/ui/components/nav_menu.dart';
+import 'package:poliglotim/app/ui/core/ui/components/nav_bar.dart';
 import 'package:poliglotim/app/ui/pages/exam/game/exam_flame_game.dart';
 import 'package:poliglotim/app/ui/pages/exam/view_models/exam_viewmodel.dart';
 
@@ -34,23 +35,23 @@ class ExamBody extends StatelessWidget {
         if (exam == null) {
           return const Center(child: Text('Exam is empty'));
         }
-
-        return LearningWorkspace(
-          menu: CourseMenu(
-            items: exam.gameTopics
-                .map(
-                  (topic) => CourseMenuItem(
-                    id: topic.id,
-                    title: topic.name,
-                    position: topic.position,
-                  ),
-                )
-                .toList(),
-            selectedItemId: viewModel.selectedTopic?.id,
-            onSelected: viewModel.selectTopic,
-          ),
-          content: _ExamContentPanel(viewModel: viewModel),
-        );
+  return Row();
+        // return LearningWorkspace(
+        //   menu: NavMenu(
+        //     items: exam.gameTopics
+        //         .map(
+        //           (topic) => NavMenuItem(
+        //             id: topic.id,
+        //             title: topic.name,
+        //             position: topic.position,
+        //           ),
+        //         )
+        //         .toList(),
+        //     selectedItemId: viewModel.selectedTopic?.id,
+        //     onSelected: viewModel.selectTopic,
+        //   ),
+        //   content: _ExamContentPanel(viewModel: viewModel),
+        // );
       },
     );
   }

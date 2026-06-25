@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:poliglotim/app/ui/pages/courses/view/components/course_card.dart';
+import 'package:poliglotim/app/ui/core/ui/components/course_card.dart';
 import 'package:poliglotim/app/ui/pages/courses/view_models/courses_viewmodel.dart';
 
 class CoursesBody extends StatelessWidget {

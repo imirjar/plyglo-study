@@ -1,53 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+
 import 'package:poliglotim/app/data/models/lesson.dart';
-import 'package:poliglotim/app/ui/core/ui/elements/indicators/loading_indicator.dart';
-import 'package:poliglotim/app/ui/core/ui/elements/placeholders/empty_placeholder.dart';
-import 'package:poliglotim/app/ui/core/ui/learning_workspace.dart';
-import 'package:poliglotim/app/ui/pages/course/view/course_menu.dart';
+
 import 'package:poliglotim/app/ui/pages/course/view_models/course_viewmodel.dart';
 
-class CourseBody extends StatelessWidget {
-  const CourseBody({
-    super.key,
-    required this.viewModel,
-  });
+import 'package:poliglotim/app/ui/core/ui/elements/indicators/loading_indicator.dart';
+import 'package:poliglotim/app/ui/core/ui/elements/placeholders/empty_placeholder.dart';
 
-  final CourseViewModel viewModel;
+import 'package:poliglotim/app/ui/core/ui/screens/learning_workspace.dart';
 
-  @override
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: viewModel,
-      builder: (context, _) {
-        return LearningWorkspace(
-          menu: CourseMenu(
-            items: viewModel.chapters
-                .map(
-                  (chapter) => CourseMenuItem(
-                    id: chapter.id,
-                    title: chapter.name,
-                    position: chapter.position,
-                  ),
-                )
-                .toList(),
-            selectedItemId: viewModel.selectedChapter?.id,
-            onSelected: (chapterId) {
-              final chapter = viewModel.chapters.firstWhere(
-                (chapter) => chapter.id == chapterId,
-              );
-              viewModel.selectChapter(chapter);
-            },
-          ),
-          content: _LessonContentPanel(viewModel: viewModel),
-        );
-      },
-    );
-  }
-}
+import 'package:poliglotim/app/ui/core/ui/components/nav_bar.dart';
 
-class _LessonContentPanel extends StatelessWidget {
-  const _LessonContentPanel({required this.viewModel});
+class LessonContentPanel extends StatelessWidget {
+  const LessonContentPanel({super.key, required this.viewModel});
 
   final CourseViewModel viewModel;
 
