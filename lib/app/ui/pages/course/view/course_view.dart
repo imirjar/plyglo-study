@@ -71,15 +71,6 @@ class _CourseViewState extends State<CourseView> {
                 ),
               ),
             ),
-            // AnimatedContainer(
-            //   duration: const Duration(milliseconds: 300),
-            //   width: _isMenuOpened! ? menuWidth : 0,
-            //   child: NavMenu(
-            //     viewModel: _viewModel,
-            //     // width: menuWidth,
-            //     constraints: constraints,
-            //   ),
-            // ),
             SizedBox(
               width: isCompact ? 48 : 56,
               child: Center(

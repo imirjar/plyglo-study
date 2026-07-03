@@ -1,61 +1,99 @@
+import 'package:get/get.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:poliglotim/app/data/models/exam.dart';
-import 'package:poliglotim/app/ui/core/ui/screens/learning_workspace.dart';
-// import 'package:poliglotim/app/ui/core/ui/components/nav_menu.dart';
-import 'package:poliglotim/app/ui/core/ui/components/nav_bar.dart';
-import 'package:poliglotim/app/ui/pages/exam/game/exam_flame_game.dart';
-import 'package:poliglotim/app/ui/pages/exam/view_models/exam_viewmodel.dart';
 
-class ExamBody extends StatelessWidget {
-  const ExamBody({
+import 'package:poliglotim/app/data/models/exam.dart';
+import 'package:poliglotim/app/ui/pages/exam/view_models/exam_viewmodel.dart';
+import 'package:poliglotim/app/ui/pages/exam/game/exam_flame_game.dart';
+import 'package:poliglotim/app/ui/core/ui/elements/buttons/toggle_button.dart';
+import 'package:poliglotim/app/ui/core/ui/screens/learning_workspace.dart';
+import 'package:poliglotim/app/ui/core/ui/components/nav_bar.dart';
+
+
+class ExamView extends StatefulWidget {
+  const ExamView({
     super.key,
     required this.screenWidth,
-    required this.viewModel,
   });
 
   final double screenWidth;
-  final ExamViewModel viewModel;
+
+  @override
+  State<ExamView> createState() => _ExamViewState();
+}
+
+class _ExamViewState extends State<ExamView> {
+  late final ExamViewModel _viewModel = Get.find<ExamViewModel>();
+  bool? _isMenuOpened;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel.loadExam();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: viewModel,
-      builder: (context, _) {
-        if (viewModel.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    return LayoutBuilder(
+      
+      builder: (context, constraints) {
+        final isCompact = constraints.maxWidth < 700;
 
-        final error = viewModel.error;
-        if (error != null) {
-          return Center(child: Text(error));
-        }
+        _isMenuOpened ??= !isCompact;
 
-        final exam = viewModel.exam;
-        if (exam == null) {
-          return const Center(child: Text('Exam is empty'));
-        }
-  return Row();
+        final menuWidth = isCompact
+            ? (constraints.maxWidth * 0.72).clamp(220.0, 268.0)
+            : constraints.maxWidth < 900
+                ? 268.0
+                : 296.0;
+
+        return Row(
         // return LearningWorkspace(
-        //   menu: NavMenu(
-        //     items: exam.gameTopics
-        //         .map(
-        //           (topic) => NavMenuItem(
-        //             id: topic.id,
-        //             title: topic.name,
-        //             position: topic.position,
-        //           ),
-        //         )
-        //         .toList(),
-        //     selectedItemId: viewModel.selectedTopic?.id,
-        //     onSelected: viewModel.selectTopic,
-        //   ),
-        //   content: _ExamContentPanel(viewModel: viewModel),
-        // );
+        children: [
+          ClipRect(
+              child: AnimatedAlign(
+                duration: const Duration(milliseconds: 300),
+                alignment: Alignment.centerLeft,
+                widthFactor: _isMenuOpened! ? 1 : 0,
+                child: SizedBox(
+                  width: menuWidth,
+                  // child: NavMenu(
+                  //   viewModel: _viewModel,
+                  //   constraints: constraints,
+                  // )
+
+                ),
+              ),
+          
+          ),
+          SizedBox(
+              width: isCompact ? 48 : 56,
+              child: Center(
+                child: MenuToggleButton(
+                  isMenuOpened: _isMenuOpened!,
+                  onPressed: _toggleMenu,
+                ),
+              ),
+            ),
+            Expanded(
+              child: _ExamContentPanel(
+                viewModel: _viewModel,
+              ),
+            ),
+          // content: _ExamContentPanel(viewModel: viewModel),
+          ],
+        );
       },
     );
   }
+  
+  void _toggleMenu() {
+    setState(() {
+      _isMenuOpened = !_isMenuOpened!;
+    });
+  }
 }
+
 
 class _ExamContentPanel extends StatelessWidget {
   const _ExamContentPanel({required this.viewModel});

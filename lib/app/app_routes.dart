@@ -5,7 +5,8 @@ import 'package:poliglotim/app/ui/pages/auth/view_models/login_viewmodel.dart';
 import 'package:poliglotim/app/ui/pages/course/view_models/course_viewmodel.dart';
 import 'package:poliglotim/app/ui/pages/courses/view_models/courses_viewmodel.dart';
 import 'package:poliglotim/app/ui/pages/exam/view_models/exam_viewmodel.dart';
-import 'package:poliglotim/app/ui/pages/courses/view/home_screen.dart';
+import 'package:poliglotim/app/ui/screens/study_screen.dart';
+import 'package:poliglotim/app/ui/screens/user_screen.dart';
 import 'package:poliglotim/app/ui/pages/user/view_models/user_viewmodel.dart';
 
 class AppRoutes {
@@ -34,11 +35,12 @@ class AppRoutes {
     ),
     GetPage(
       name: user,
-      page: () => const StudyScreen(section: StudySection.user),
-      middlewares: [AuthMiddleware()],
-      binding: BindingsBuilder(
-        () => Get.lazyPut<AuthViewModel>(() => AuthViewModel()),
-      ),
+      // page: () => const UserScreen(section: StudySection.user),
+      page: () => const UserScreen(),
+      // middlewares: [AuthMiddleware()],
+      // binding: BindingsBuilder(
+      //   () => Get.lazyPut<AuthViewModel>(() => AuthViewModel()),
+      // ),
     ),
     GetPage(
       name: exam,

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:poliglotim/app/ui/core/ui/components/app_header.dart';
 import 'package:poliglotim/app/ui/pages/course/view/course_view.dart';
 import 'package:poliglotim/app/ui/pages/courses/view/courses_view.dart';
-import 'package:poliglotim/app/ui/pages/exam/view/exam_screen.dart';
+import 'package:poliglotim/app/ui/pages/exam/view/exam_view.dart';
 import 'package:poliglotim/app/ui/pages/user/view/user_screen.dart';
 
 enum StudySection {
@@ -65,7 +65,7 @@ class StudyScreen extends StatelessWidget {
         ],
       StudySection.exam => [
           SliverFillRemaining( 
-            child: ExamScreen(screenWidth: screenWidth),
+            child: ExamView(screenWidth: screenWidth),
           ),
         ],
       StudySection.user => [
