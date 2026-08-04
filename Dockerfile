@@ -10,14 +10,5 @@ RUN flutter build web --release \
   --dart-define=AUTH_BASE_URL=${AUTH_BASE_URL} \
   --dart-define=KEYCLOAK_REALM=${KEYCLOAK_REALM}
 
-# Stage 2: Serve with Caddy
-FROM caddy:alpine
+VOLUME /app/build/web 
 
-# Копируем Caddyfile
-COPY Caddyfile /etc/caddy/Caddyfile
-
-# Копируем собранный Flutter
-COPY --from=builder /app/build/web /usr/share/caddy
-
-# Caddy по умолчанию слушает 80 порт
-EXPOSE 80
