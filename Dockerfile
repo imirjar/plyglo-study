@@ -1,4 +1,5 @@
-FROM flutter:3.24.0
+# Stage 1: Build Flutter web
+FROM instrumentisto/flutter:latest
 WORKDIR /app
 COPY . .
 RUN flutter build web --release 
