@@ -1,4 +1,5 @@
-FROM ubuntu:24.04
+# ---------- Stage 1: Build ----------
+FROM ubuntu:24.04 AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV FLUTTER_HOME=/opt/flutter
@@ -18,24 +19,25 @@ RUN apt-get update && apt-get install -y \
     libglu1-mesa \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка Flutter
-RUN git clone --depth 1 --branch stable https://github.com/flutter/flutter.git ${FLUTTER_HOME}
+RUN git clone --depth 1 --branch stable \
+    https://github.com/flutter/flutter.git ${FLUTTER_HOME}
 
-# Первичная инициализация
-RUN flutter doctor
 RUN flutter config --enable-web
 
 WORKDIR /app
 
-# Сначала зависимости (для кэширования)
 COPY pubspec.yaml pubspec.lock ./
 RUN flutter pub get
 
-# Затем проект
 COPY . .
 
-# Сборка web
 RUN flutter build web --release
 
-# Здесь будет готовый билд
+# ---------- Stage 2: Artifact ----------
+FROM ubuntu:24.04
+
+WORKDIR /app
+
+COPY --from=builder /app/build/web /app/build/web
+
 VOLUME ["/app/build/web"]
