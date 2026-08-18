@@ -1,5 +1,5 @@
-# ---------- Stage 1: Build ----------
-FROM ubuntu:24.04 AS builder
+
+FROM ubuntu:24.04 AS build
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV FLUTTER_HOME=/opt/flutter
