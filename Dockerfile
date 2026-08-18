@@ -25,19 +25,13 @@ RUN git clone --depth 1 --branch stable \
 RUN flutter config --enable-web
 
 WORKDIR /app
-
 COPY pubspec.yaml pubspec.lock ./
 RUN flutter pub get
-
 COPY . .
-
 RUN flutter build web --release
 
-# ---------- Stage 2: Artifact ----------
-FROM ubuntu:24.04
+FROM caddy:alpine
+COPY --from=build /app/build/web /srv
+COPY Caddyfile /etc/caddy/Caddyfile
 
-WORKDIR /app
-
-COPY --from=builder /app/build/web /app/build/web
-
-VOLUME ["/app/build/web"]
+EXPOSE 80
