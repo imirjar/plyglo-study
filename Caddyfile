@@ -1,18 +1,8 @@
 :80 {
-    log {
-        output stdout
-        level INFO
-    }
-
-    handle /auth/callback {
-        root * /usr/share/caddy
-        try_files {path} /index.html
-        file_server
-    }
-
-    handle {
-        root * /usr/share/caddy
-        try_files {path} /index.html
-        file_server
-    }
+    root * /srv
+    encode zstd gzip
+    @staticAssets path *.css *.js *.mjs *.jpg *.jpeg *.gif *.png *.svg *.ico *.webp *.woff *.woff2
+    header @staticAssets Cache-Control "public, max-age=2592000, immutable"
+    try_files {path} {path}/ /index.html
+    file_server
 }
