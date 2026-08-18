@@ -1,7 +1,9 @@
 :80 {
     root * /srv
     encode zstd gzip
-    @staticAssets path *.css *.js *.mjs *.jpg *.jpeg *.gif *.png *.svg *.ico *.webp *.woff *.woff2
+    @staticAssets {
+        path *.css *.js *.mjs *.jpg *.jpeg *.gif *.png *.svg *.ico *.webp *.woff *.woff2 *.ttf *.eot *.map
+    }
     header @staticAssets Cache-Control "public, max-age=2592000, immutable"
     try_files {path} {path}/ /index.html
     file_server
